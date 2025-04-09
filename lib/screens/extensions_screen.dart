@@ -94,7 +94,21 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
   @override
   Widget build(BuildContext context) {
     return _loading
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "Loading Extensions ...",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ],
+            ),
+          )
         : Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -155,11 +169,11 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 8),
+                              horizontal: 16, vertical: 8),
                           child: const Text(
                             "Install New +",
                             style: TextStyle(
-                              color: AppColors.buttonText,
+                              color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                             ),

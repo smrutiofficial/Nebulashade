@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui'; // Required for ImageFilter
 import 'package:flutter/material.dart';
 import 'package:nebulashade/constants/colours.dart';
 import 'package:nebulashade/screens/ColorPaletteScreen.dart';
@@ -28,8 +29,8 @@ class _ThemeScreenState extends State<ThemeScreen> {
     _getCurrentWallpaper();
     _getCurrentThemes();
     Timer.periodic(Duration(seconds: 3), (_) {
-    _getCurrentWallpaper(); // Periodically check for updates
-  });
+      _getCurrentWallpaper(); // Periodically check for updates
+    });
   }
 
   Future<void> _getCurrentWallpaper() async {
@@ -110,6 +111,22 @@ class _ThemeScreenState extends State<ThemeScreen> {
     }
   }
 
+  Future<List<String>> _getAvailableThemes() async {
+    final homeDir = Platform.environment['HOME'];
+    final themesDir = Directory('$homeDir/.themes');
+
+    if (await themesDir.exists()) {
+      final dirs = themesDir
+          .listSync()
+          .whereType<Directory>()
+          .map((dir) => dir.path.split('/').last)
+          .toList();
+
+      return dirs;
+    }
+    return [];
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -183,7 +200,6 @@ class _ThemeScreenState extends State<ThemeScreen> {
                             )
                           ],
                         ),
-                        
                       ),
                     ),
                     SizedBox(width: 16),
@@ -425,43 +441,123 @@ class _ThemeScreenState extends State<ThemeScreen> {
     );
   }
 
+  // import 'dart:ui'; // Required for ImageFilter
+
   Widget _buildThemeOption(String title, String themeName, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Text(title, style: TextStyle(color: AppColors.subtext, fontSize: 14)),
-          if (title == "Global Theme") ...[
-            SizedBox(width: 8),
-            Icon(Icons.info, color: AppColors.accent, size: 24),
-          ],
-          Spacer(),
-          Container(
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Row(
+      children: [
+        Text(title, style: TextStyle(color: AppColors.subtext, fontSize: 14)),
+        if (title == "Global Theme") ...[
+          SizedBox(width: 8),
+          Icon(Icons.info, color: AppColors.accent, size: 24),
+        ],
+        Spacer(),
+        GestureDetector(
+          onTap: () async {
+            List<String> availableThemes = await _getAvailableThemes();
+            showDialog(
+              context: context,
+              barrierColor: Colors.transparent,
+              builder: (context) {
+                return GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Dialog(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    child: GestureDetector(
+                      onTap: () {}, // Prevent tap from bubbling up
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width * 0.52),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+                            child: Container(
+                              width: 420,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 1, color: Colors.white.withAlpha(51)),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                     AppColors.cardBackground.withAlpha(205),
+                                    AppColors.cardBackground.withAlpha(127),
+                                    AppColors.accent.withAlpha(51),
+                                  ],
+                                  stops: [0.0,0.6, 1.0],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: availableThemes.expand((theme) {
+                                    return [
+                                      ListTile(
+                                        title: Text(
+                                          theme,
+                                          style: TextStyle(color: AppColors.accent),
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            themeName = theme;
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      Divider(
+                                        height: 1,
+                                        thickness: 1,
+                                        color: AppColors.subtext.withAlpha(20),
+                                      ),
+                                    ];
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          child: Container(
             width: 450,
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             decoration: BoxDecoration(
               color: AppColors.cardBackground,
               borderRadius: BorderRadius.circular(8),
             ),
-            child:
-                Text(themeName, style: TextStyle(color: AppColors.textprimary)),
+            child: Text(
+              themeName,
+              style: TextStyle(color: AppColors.textprimary),
+            ),
           ),
-          SizedBox(width: 8),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 4.5, horizontal: 2),
-            decoration: BoxDecoration(
-              color: AppColors.buttonBackground,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: IconButton(
-              icon: Icon(icon, color: AppColors.subtext),
-              onPressed: () {},
-            ),
-          )
-        ],
-      ),
-    );
-  }
+        ),
+        SizedBox(width: 8),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 4.5, horizontal: 2),
+          decoration: BoxDecoration(
+            color: AppColors.buttonBackground,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: IconButton(
+            icon: Icon(icon, color: AppColors.subtext),
+            onPressed: () {},
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }
 
 class _HoverIcon extends StatefulWidget {

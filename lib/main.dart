@@ -20,7 +20,7 @@ void main() async{
 
   WindowOptions windowOptions = const WindowOptions(
     title: "NEBULASHADE", // 👈 Set your custom title here
-    // size: Size(1350, 700),
+    // size: Size(1343, 750),
     center: true,
     backgroundColor: Colors.transparent,
   );

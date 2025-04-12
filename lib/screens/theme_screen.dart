@@ -5,6 +5,7 @@ import 'package:nebulashade/constants/colours.dart';
 import 'package:nebulashade/screens/ColorPaletteScreen.dart';
 import 'package:nebulashade/screens/dynamic/getthemes_screen.dart';
 import 'package:nebulashade/screens/dynamic/newwallpaper_screen.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 // import 'package:file_picker/file_picker.dart';
@@ -17,6 +18,7 @@ class ThemeScreen extends StatefulWidget {
 class _ThemeScreenState extends State<ThemeScreen> {
   bool isDarkMode = true;
   String? wallpaperPath;
+  List<Color> dominantColors = [];
 
   // Theme variables
   String globalTheme = "Loading...";
@@ -33,6 +35,30 @@ class _ThemeScreenState extends State<ThemeScreen> {
     });
   }
 
+  Future<void> _extractColorsFromWallpaper(String imagePath) async {
+    try {
+      final imageFile = File(imagePath);
+      if (!await imageFile.exists()) return;
+
+      final paletteGenerator = await PaletteGenerator.fromImageProvider(
+        FileImage(imageFile),
+        maximumColorCount: 9, // Get 7 dominant colors
+      );
+
+      setState(() {
+        dominantColors = paletteGenerator.colors.toList();
+      });
+
+      // Print colors for debugging
+      // print('Extracted colors:');
+      // dominantColors.forEach((color) {
+      //   print('Color: ${color.value.toRadixString(16)}');
+      // });
+    } catch (e) {
+      print('Error extracting colors: $e');
+    }
+  }
+
   Future<void> _getCurrentWallpaper() async {
     try {
       final result = await Process.run(
@@ -46,19 +72,22 @@ class _ThemeScreenState extends State<ThemeScreen> {
         if (output.startsWith("'file://") && output.endsWith("'")) {
           String path = output.substring(8, output.length - 1);
 
-          // Only update if the path has changed
           if (wallpaperPath != path) {
             setState(() {
               wallpaperPath = path;
             });
-            print('Wallpaper path updated: $wallpaperPath'); // Debug log
+            print('Wallpaper path updated: $wallpaperPath');
+
+            // Add this line to trigger color extraction
+            await _extractColorsFromWallpaper(path);
           }
         }
       }
     } catch (e) {
       print("Error fetching wallpaper: $e");
       setState(() {
-        wallpaperPath = null; // Optional: Update UI to show error
+        wallpaperPath = null;
+        dominantColors = []; // Clear colors on error
       });
     }
   }
@@ -125,6 +154,125 @@ class _ThemeScreenState extends State<ThemeScreen> {
       return dirs;
     }
     return [];
+  }
+
+// Add this in your build method where you want to show the colors
+  Widget _buildColorPalette() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end, // Align to right
+      children: [
+        SizedBox(height: 40),
+        Container(
+          height: 40,
+          child: Row(
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF2a384c),
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                onPressed: () {},
+                child: Text("Open CSS file",
+                    style: TextStyle(color: AppColors.subtext,fontSize: 12)),
+              ),
+              SizedBox(width: 10),
+              Container(
+                margin: EdgeInsets.only(bottom: 0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GetThemes(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors
+                        .buttonBackground, // Set your desired background color
+                    foregroundColor: AppColors.buttonText, // Text color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6), // Rounded corners
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 12),
+                    elevation:
+                        0, // optional: remove elevation if you want a flat style
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                    child: Icon(
+                      Icons.shopping_cart,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 0),
+                      child: ElevatedButton(
+                        onPressed: _openFolderPicker,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.buttonBackground,
+                          foregroundColor: AppColors.buttonText,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 12),
+                          elevation: 0,
+                        ),
+                        child: const Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                          child: Icon(
+                            Icons.inventory,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+              Expanded(
+                child: dominantColors.isEmpty
+                    ? Center(child: CircularProgressIndicator())
+                    : Directionality(
+                        // Add Directionality for RTL layout
+                        textDirection:
+                            TextDirection.rtl, // This makes it start from right
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: dominantColors.length,
+                          itemBuilder: (context, index) {
+                            // No need to reverse the list since Directionality handles it
+                            return GestureDetector(
+                              onTap: () {
+                                print(
+                                    'Color selected: ${dominantColors[index]}');
+                              },
+                              child: Container(
+                                width: 64.8,
+                                decoration: BoxDecoration(
+                                  color: dominantColors[index],
+                                  borderRadius: BorderRadius.circular(0),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -225,8 +373,8 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                         style: TextStyle(
                                             color: AppColors.subtext,
                                             fontSize: 14)),
-                                    SizedBox(width: 10),
-                                    _HoverIcon(icon: Icons.edit, size: 18),
+                                    // SizedBox(width: 10),
+                                    // _HoverIcon(icon: Icons.edit, size: 18),
                                     SizedBox(width: 10),
                                     _HoverIcon(
                                         icon: Icons.tab_unselected, size: 18),
@@ -259,24 +407,6 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ImageRowScroller(),
-                                      // Center(
-                                      //   child: ElevatedButton(
-                                      //     style: ElevatedButton.styleFrom(
-                                      //       backgroundColor:
-                                      //           AppColors.buttonBackground,
-                                      //       padding: EdgeInsets.symmetric(
-                                      //           vertical: 24, horizontal: 25),
-                                      //       shape: RoundedRectangleBorder(
-                                      //         borderRadius:
-                                      //             BorderRadius.circular(6),
-                                      //       ),
-                                      //     ),
-                                      //     onPressed: () {},
-                                      //     child: Text("Choose an Album",
-                                      //         style: TextStyle(
-                                      //             color: AppColors.subtext)),
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                 )
@@ -322,7 +452,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 36),
+                _buildColorPalette(),
+                SizedBox(height: 20),
+              
                 _buildThemeOption("Global Theme", globalTheme, Icons.add),
                 _buildThemeOption("GTK 3.0 Theme", gtk3Theme, Icons.edit),
                 _buildThemeOption("GTK 4.0 Theme", gtk4Theme, Icons.edit),
@@ -353,86 +485,6 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 ),
                 SizedBox(height: 16),
                 // ---------------------------------------------------
-                Row(
-                  children: [
-                    Spacer(),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF2a384c),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text("Open CSS file",
-                          style: TextStyle(color: AppColors.subtext)),
-                    ),
-                    SizedBox(width: 10),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GetThemes(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors
-                              .buttonBackground, // Set your desired background color
-                          foregroundColor: AppColors.buttonText, // Text color
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(6), // Rounded corners
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 12),
-                          elevation:
-                              0, // optional: remove elevation if you want a flat style
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 8),
-                          child: Icon(
-                            Icons.shopping_cart,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 0),
-                      child: ElevatedButton(
-                        onPressed: _openFolderPicker,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.buttonBackground,
-                          foregroundColor: AppColors.buttonText,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 12),
-                          elevation: 0,
-                        ),
-                        child: const Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                          child: Icon(
-                            Icons.inventory,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
               ],
             ),
           ),
@@ -441,82 +493,85 @@ class _ThemeScreenState extends State<ThemeScreen> {
     );
   }
 
-  // import 'dart:ui'; // Required for ImageFilter
-
   Widget _buildThemeOption(String title, String themeName, IconData icon) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Row(
-      children: [
-        Text(title, style: TextStyle(color: AppColors.subtext, fontSize: 14)),
-        if (title == "Global Theme") ...[
-          SizedBox(width: 8),
-          Icon(Icons.info, color: AppColors.accent, size: 24),
-        ],
-        Spacer(),
-        GestureDetector(
-          onTap: () async {
-            List<String> availableThemes = await _getAvailableThemes();
-            showDialog(
-              context: context,
-              barrierColor: Colors.transparent,
-              builder: (context) {
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Dialog(
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    child: GestureDetector(
-                      onTap: () {}, // Prevent tap from bubbling up
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.width * 0.52),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                            child: Container(
-                              width: 420,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    width: 1, color: Colors.white.withAlpha(51)),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                     AppColors.cardBackground.withAlpha(205),
-                                    AppColors.cardBackground.withAlpha(127),
-                                    AppColors.accent.withAlpha(51),
-                                  ],
-                                  stops: [0.0,0.6, 1.0],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Text(title, style: TextStyle(color: AppColors.subtext, fontSize: 14)),
+          if (title == "Global Theme") ...[
+            SizedBox(width: 8),
+            Icon(Icons.info, color: AppColors.accent, size: 24),
+          ],
+          Spacer(),
+          GestureDetector(
+            onTap: () async {
+              List<String> availableThemes = await _getAvailableThemes();
+              showDialog(
+                context: context,
+                barrierColor: Colors.transparent,
+                builder: (context) {
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Dialog(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      child: GestureDetector(
+                        onTap: () {}, // Prevent tap from bubbling up
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.52),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: BackdropFilter(
+                              filter:
+                                  ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+                              child: Container(
+                                width: 420,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1,
+                                      color: Colors.white.withAlpha(51)),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      AppColors.cardBackground.withAlpha(205),
+                                      AppColors.cardBackground.withAlpha(127),
+                                      AppColors.accent.withAlpha(51),
+                                    ],
+                                    stops: [0.0, 0.6, 1.0],
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: availableThemes.expand((theme) {
-                                    return [
-                                      ListTile(
-                                        title: Text(
-                                          theme,
-                                          style: TextStyle(color: AppColors.accent),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: availableThemes.expand((theme) {
+                                      return [
+                                        ListTile(
+                                          title: Text(
+                                            theme,
+                                            style: TextStyle(
+                                                color: AppColors.accent),
+                                          ),
+                                          onTap: () {
+                                            setState(() {
+                                              themeName = theme;
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
                                         ),
-                                        onTap: () {
-                                          setState(() {
-                                            themeName = theme;
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      Divider(
-                                        height: 1,
-                                        thickness: 1,
-                                        color: AppColors.subtext.withAlpha(20),
-                                      ),
-                                    ];
-                                  }).toList(),
+                                        Divider(
+                                          height: 1,
+                                          thickness: 1,
+                                          color:
+                                              AppColors.subtext.withAlpha(20),
+                                        ),
+                                      ];
+                                    }).toList(),
+                                  ),
                                 ),
                               ),
                             ),
@@ -524,40 +579,39 @@ class _ThemeScreenState extends State<ThemeScreen> {
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
-          },
-          child: Container(
-            width: 450,
-            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                  );
+                },
+              );
+            },
+            child: Container(
+              width: 450,
+              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                themeName,
+                style: TextStyle(color: AppColors.textprimary),
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 4.5, horizontal: 2),
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: AppColors.buttonBackground,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(
-              themeName,
-              style: TextStyle(color: AppColors.textprimary),
+            child: IconButton(
+              icon: Icon(icon, color: AppColors.subtext),
+              onPressed: () {},
             ),
           ),
-        ),
-        SizedBox(width: 8),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 4.5, horizontal: 2),
-          decoration: BoxDecoration(
-            color: AppColors.buttonBackground,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: IconButton(
-            icon: Icon(icon, color: AppColors.subtext),
-            onPressed: () {},
-          ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }
 
 class _HoverIcon extends StatefulWidget {

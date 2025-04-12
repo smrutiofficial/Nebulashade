@@ -4,7 +4,7 @@ import 'package:nebulashade/constants/colours.dart';
 import 'package:nebulashade/screens/ColorPaletteScreen.dart';
 import 'package:nebulashade/screens/dynamic/getthemes_screen.dart';
 import 'package:nebulashade/screens/dynamic/newwallpaper_screen.dart';
-
+import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 // import 'package:file_picker/file_picker.dart';
 
@@ -22,12 +22,14 @@ class _ThemeScreenState extends State<ThemeScreen> {
   String gtk3Theme = "Loading...";
   String gtk4Theme = "Loading...";
   String shellTheme = "Loading...";
-
   @override
   void initState() {
     super.initState();
     _getCurrentWallpaper();
     _getCurrentThemes();
+    Timer.periodic(Duration(seconds: 3), (_) {
+    _getCurrentWallpaper(); // Periodically check for updates
+  });
   }
 
   Future<void> _getCurrentWallpaper() async {
@@ -42,13 +44,21 @@ class _ThemeScreenState extends State<ThemeScreen> {
 
         if (output.startsWith("'file://") && output.endsWith("'")) {
           String path = output.substring(8, output.length - 1);
-          setState(() {
-            wallpaperPath = path;
-          });
+
+          // Only update if the path has changed
+          if (wallpaperPath != path) {
+            setState(() {
+              wallpaperPath = path;
+            });
+            print('Wallpaper path updated: $wallpaperPath'); // Debug log
+          }
         }
       }
     } catch (e) {
       print("Error fetching wallpaper: $e");
+      setState(() {
+        wallpaperPath = null; // Optional: Update UI to show error
+      });
     }
   }
 
@@ -67,6 +77,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
       });
     } catch (e) {
       print("Error fetching theme: $e");
+      setState(() {
+        globalTheme = "Error"; // Optional: Update UI to show error
+      });
     }
   }
 
@@ -158,6 +171,8 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                 child: wallpaperPath != null
                                     ? Image.file(
                                         File(wallpaperPath!),
+                                        key: ValueKey(
+                                            wallpaperPath), // This triggers a re-render
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                       )
@@ -165,9 +180,10 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                         child: CircularProgressIndicator(),
                                       ),
                               ),
-                            ),
+                            )
                           ],
                         ),
+                        
                       ),
                     ),
                     SizedBox(width: 16),
@@ -205,9 +221,11 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                NewWallpaper(), // Replace with your page
+                                                NewWallpaper(),
                                           ),
-                                        );
+                                        ).then((_) {
+                                          _getCurrentWallpaper(); // Refresh wallpaper after returning
+                                        });
                                       },
                                       child: _HoverIcon(
                                         icon: Icons.install_desktop,
@@ -499,7 +517,8 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
   }
 
   Future<void> loadImages() async {
-    final homeDir = Platform.environment['HOME'] ?? (await getApplicationDocumentsDirectory()).path;
+    final homeDir = Platform.environment['HOME'] ??
+        (await getApplicationDocumentsDirectory()).path;
     final targetDir = Directory('$homeDir/nexwallpapers');
 
     if (!await targetDir.exists()) {
@@ -509,7 +528,8 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
     final files = targetDir
         .listSync()
         .whereType<File>()
-        .where((file) => file.path.endsWith('.jpg') || file.path.endsWith('.png'))
+        .where(
+            (file) => file.path.endsWith('.jpg') || file.path.endsWith('.png'))
         .toList();
 
     setState(() {
@@ -518,38 +538,36 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
   }
 
   Future<void> setAsWallpaper(String path) async {
-  final uri = 'file://${Uri.encodeFull(path)}'; // Ensure proper URI format
+    final uri = 'file://${Uri.encodeFull(path)}'; // Ensure proper URI format
 
-  try {
-    final result1 = await Process.run('gsettings', [
-      'set',
-      'org.gnome.desktop.background',
-      'picture-uri',
-      uri,
-    ]);
+    try {
+      final result1 = await Process.run('gsettings', [
+        'set',
+        'org.gnome.desktop.background',
+        'picture-uri',
+        uri,
+      ]);
 
-    final result2 = await Process.run('gsettings', [
-      'set',
-      'org.gnome.desktop.background',
-      'picture-uri-dark',
-      uri,
-    ]);
+      final result2 = await Process.run('gsettings', [
+        'set',
+        'org.gnome.desktop.background',
+        'picture-uri-dark',
+        uri,
+      ]);
 
-
-    if (result1.exitCode == 0 && result2.exitCode == 0) {
+      if (result1.exitCode == 0 && result2.exitCode == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Wallpaper set successfully!')),
+        );
+      } else {
+        throw Exception("gsettings failed");
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Wallpaper set successfully!')),
+        SnackBar(content: Text('Failed to set wallpaper: $e')),
       );
-    } else {
-      throw Exception("gsettings failed");
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to set wallpaper: $e')),
-    );
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -562,7 +580,9 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
         itemCount: images.isNotEmpty ? images.length : 5,
         separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          final imagePath = images.isNotEmpty ? images[index].path : 'assets/sample$index.jpg';
+          final imagePath = images.isNotEmpty
+              ? images[index].path
+              : 'assets/sample$index.jpg';
 
           return GestureDetector(
             onTap: () {

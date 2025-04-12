@@ -115,7 +115,6 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // --------------------------------------------------------------------------
                     Column(
@@ -147,8 +146,9 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                     ),
                     Spacer(),
 
-                    Padding(
-                      padding: EdgeInsets.only(top: 12),
+                    // padding: EdgeInsets.only(top: 12),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 15),
                       child: ElevatedButton(
                         onPressed: () {
                           // Do something here
@@ -163,24 +163,21 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                                 BorderRadius.circular(6), // Rounded corners
                           ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
+                              horizontal: 10, vertical: 12),
                           elevation:
                               0, // optional: remove elevation if you want a flat style
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          child: const Text(
-                            "Install New +",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
+                              horizontal: 6, vertical: 8),
+                          child: Icon(
+                            Icons.shopping_cart,
+                            color: Colors.white,
+                            size: 20,
                           ),
                         ),
                       ),
-                    )
+                    ),
 
                     // ---------------------------------------------------------------------------
                   ],

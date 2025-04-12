@@ -20,7 +20,48 @@ class _FontsScreenState extends State<FontsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionTitle(title: "Preferred Fonts",),
+            // new font button
+            Row(
+              children: [
+                Spacer(),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Do something here
+                      print("Button Pressed");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(
+                          255, 26, 33, 44), // Set your desired background color
+                      foregroundColor: AppColors.buttonText, // Text color
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(6), // Rounded corners
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 12),
+                      elevation:
+                          0, // optional: remove elevation if you want a flat style
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 8),
+                      child: Icon(
+                        Icons.shopping_cart,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // ===================================================================
+
+            const SectionTitle(
+              title: "Preferred Fonts",
+            ),
             const SizedBox(height: 16),
 
             // Font Option Tiles with spacing
@@ -230,12 +271,14 @@ class SettingLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Text(title,
-           style: const TextStyle(
+      child: Text(
+        title,
+        style: const TextStyle(
           fontSize: 12,
           color: AppColors.accent,
           fontWeight: FontWeight.w300,
-        ),),
+        ),
+      ),
     );
   }
 }

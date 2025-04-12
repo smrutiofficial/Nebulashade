@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:nebulashade/screens/fonts_screen.dart';
 import 'package:nebulashade/screens/sound_screen.dart';
 // import 'package:nebulashade/screens/window_screen.dart';
@@ -13,7 +14,21 @@ import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
 import 'components/sidebar_button.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    title: "NEBULASHADE", // 👈 Set your custom title here
+    // size: Size(1350, 700),
+    center: true,
+    backgroundColor: Colors.transparent,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
   runApp(MyApp());
 }
 

@@ -125,7 +125,7 @@ class _SoundScreenState extends State<SoundScreen> {
     Row(
       children: [
         Expanded(
-          flex: 8,
+          flex: 9,
           child: const Text(
             "System Sound Theme",
             style: TextStyle(color: Colors.white,fontSize: 14),
@@ -133,7 +133,7 @@ class _SoundScreenState extends State<SoundScreen> {
         ),
         const SizedBox(width: 80),
         Expanded( 
-          flex: 2,// to prevent overflow and make it responsive
+          flex: 1,// to prevent overflow and make it responsive
           child: DropdownButtonHideUnderline(
   child: DropdownButton<String>(
     value: selectedTheme,

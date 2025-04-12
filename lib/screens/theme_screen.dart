@@ -358,7 +358,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 28, vertical: 10),
+                                horizontal: 11, vertical: 10),
                             height: 200,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
@@ -464,6 +464,30 @@ class _ThemeScreenState extends State<ThemeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Toggle Dark Mode",
+                        style:
+                            TextStyle(color: AppColors.subtext, fontSize: 14)),
+                    Transform.scale(
+                      scale: 0.9,
+                      child: Switch(
+                        value: isDarkMode,
+                        onChanged: (bool value) {
+                          setState(() {
+                            isDarkMode = value;
+                          });
+                        },
+                        activeColor: Color(0xFF151c26),
+                        activeTrackColor: Color(0xFFbdcadb),
+                        inactiveThumbColor: Color(0xFFbdcadb),
+                        inactiveTrackColor: Color(0xFF151c26),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Fix Flatpak GTK Theme",
                         style:
                             TextStyle(color: AppColors.subtext, fontSize: 14)),
                     Transform.scale(

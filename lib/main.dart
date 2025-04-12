@@ -14,7 +14,7 @@ import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
 import 'components/sidebar_button.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
@@ -60,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     },
     {"label": "Fonts", "icon": Icons.format_size, "screen": FontsScreen()},
     {"label": "Sound", "icon": Icons.graphic_eq, "screen": SoundScreen()},
+    {"label": "Hotkey", "icon": Icons.keyboard, "screen": win.WindowScreen()},
     {"label": "Windows", "icon": Icons.web_asset, "screen": win.WindowScreen()},
     {
       "label": "Extensions",

@@ -101,38 +101,39 @@ class _NewWallpaperState extends State<NewWallpaper> {
       });
     }
   }
-Future<void> setAsWallpaper(String path) async {
-  final uri = 'file://${Uri.encodeFull(path)}'; // Ensure proper URI format
 
-  try {
-    final result1 = await Process.run('gsettings', [
-      'set',
-      'org.gnome.desktop.background',
-      'picture-uri',
-      uri,
-    ]);
+  Future<void> setAsWallpaper(String path) async {
+    final uri = 'file://${Uri.encodeFull(path)}'; // Ensure proper URI format
 
-    final result2 = await Process.run('gsettings', [
-      'set',
-      'org.gnome.desktop.background',
-      'picture-uri-dark',
-      uri,
-    ]);
+    try {
+      final result1 = await Process.run('gsettings', [
+        'set',
+        'org.gnome.desktop.background',
+        'picture-uri',
+        uri,
+      ]);
 
-    if (result1.exitCode == 0 && result2.exitCode == 0) {
+      final result2 = await Process.run('gsettings', [
+        'set',
+        'org.gnome.desktop.background',
+        'picture-uri-dark',
+        uri,
+      ]);
+
+      if (result1.exitCode == 0 && result2.exitCode == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Wallpaper set successfully!')),
+        );
+      } else {
+        throw Exception("gsettings failed");
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Wallpaper set successfully!')),
+        SnackBar(content: Text('Failed to set wallpaper: $e')),
       );
-    } else {
-      throw Exception("gsettings failed");
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to set wallpaper: $e')),
-    );
   }
-}
-     
+
   void _showImageOptions(Map<String, String> imageData) {
     // final imageUrl = imageData['regular']!;
     final downloadUrl = imageData['raw']!;
@@ -187,43 +188,44 @@ Future<void> setAsWallpaper(String path) async {
 
               // =------------set as background --------------------------
               ListTile(
-  leading: Icon(Icons.wallpaper, color: AppColors.accent),
-  title: Text("Set as wallpaper", style: TextStyle(color: Colors.white)),
-  onTap: () async {
-    Navigator.pop(context);
-    
-    final imageUrl = imageData['regular']!;
-    final downloadUrl = imageData['raw']!;
-    
-    final directory = Directory('${Platform.environment['HOME']}/nexwallpapers');
-    if (!(await directory.exists())) {
-      await directory.create(recursive: true);
-    }
+                leading: Icon(Icons.wallpaper, color: AppColors.accent),
+                title: Text("Set as wallpaper",
+                    style: TextStyle(color: Colors.white)),
+                onTap: () async {
+                  Navigator.pop(context);
 
-    final rawName = downloadUrl.split('/').last.split('?').first;
-    final fileName = '$rawName.jpg';
-    final filePath = p.join(directory.path, fileName);
+                  // final imageUrl = imageData['regular']!;
+                  final downloadUrl = imageData['raw']!;
 
-    try {
-      final response = await http.get(Uri.parse(downloadUrl));
-      final file = File(filePath);
-      await file.writeAsBytes(response.bodyBytes);
+                  final directory = Directory(
+                      '${Platform.environment['HOME']}/nexwallpapers');
+                  if (!(await directory.exists())) {
+                    await directory.create(recursive: true);
+                  }
 
-      // Set the image as wallpaper using gsettings
-      await setAsWallpaper(filePath);
+                  final rawName = downloadUrl.split('/').last.split('?').first;
+                  final fileName = '$rawName.jpg';
+                  final filePath = p.join(directory.path, fileName);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Wallpaper set successfully!")),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to set wallpaper: $e")),
-      );
-    }
-  },
-),
+                  try {
+                    final response = await http.get(Uri.parse(downloadUrl));
+                    final file = File(filePath);
+                    await file.writeAsBytes(response.bodyBytes);
 
-       ],
+                    // Set the image as wallpaper using gsettings
+                    await setAsWallpaper(filePath);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Wallpaper set successfully!")),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Failed to set wallpaper: $e")),
+                    );
+                  }
+                },
+              ),
+            ],
           ),
         );
       },
@@ -232,7 +234,7 @@ Future<void> setAsWallpaper(String path) async {
 
   Widget buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+      padding: const EdgeInsets.only(left: 50,right: 50, bottom: 20),
       child: TextField(
         controller: _searchController,
         style: TextStyle(color: Colors.white),
@@ -258,7 +260,7 @@ Future<void> setAsWallpaper(String path) async {
 
   Widget buildPageNavigator() {
     return Padding(
-      padding: const EdgeInsets.only(left: 50, right: 50, bottom: 20),
+      padding: const EdgeInsets.only(left: 0),
       child: Row(
         children: [
           Container(
@@ -383,17 +385,37 @@ Future<void> setAsWallpaper(String path) async {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.accent,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          buildSearchBar(),
-          if (_imageUrls.isNotEmpty) buildPageNavigator(),
-          buildImageGrid(),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Custom "AppBar"
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: AppColors.accent),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Back behavior
+                    },
+                  ),
+                  SizedBox(width: 12), // Space between icon and content
+                  Expanded(
+                    child: _imageUrls.isNotEmpty
+                        ? buildPageNavigator()
+                        : SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ),
+
+            // Rest of your content
+            buildSearchBar(),
+
+            buildImageGrid(),
+          ],
+        ),
       ),
     );
   }

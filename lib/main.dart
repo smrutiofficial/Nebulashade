@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nebulashade/screens/hotkey_screen.dart';
+import 'package:nebulashade/screens/color_edit_screen.dart';
+// import 'package:nebulashade/screens/hotkey_screen.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:nebulashade/screens/fonts_screen.dart';
 import 'package:nebulashade/screens/sound_screen.dart';
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     },
     {"label": "Fonts", "icon": Icons.format_size, "screen": FontsScreen()},
     {"label": "Sound", "icon": Icons.graphic_eq, "screen": SoundScreen()},
-    {"label": "Hotkey", "icon": Icons.keyboard, "screen": HotKey()},
+    {"label": "Hotkey", "icon": Icons.keyboard, "screen": CssColorListScreen()},
     {"label": "Windows", "icon": Icons.web_asset, "screen": win.WindowScreen()},
     {
       "label": "Extensions",

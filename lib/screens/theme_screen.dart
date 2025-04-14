@@ -3,6 +3,7 @@ import 'dart:ui'; // Required for ImageFilter
 import 'package:flutter/material.dart';
 import 'package:nebulashade/constants/colours.dart';
 import 'package:nebulashade/screens/ColorPaletteScreen.dart';
+import 'package:nebulashade/screens/color_edit_screen.dart';
 import 'package:nebulashade/screens/dynamic/getthemes_screen.dart';
 import 'package:nebulashade/screens/dynamic/newwallpaper_screen.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -176,7 +177,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 ),
                 onPressed: () {},
                 child: Text("Open CSS file",
-                    style: TextStyle(color: AppColors.subtext,fontSize: 12)),
+                    style: TextStyle(color: AppColors.subtext, fontSize: 12)),
               ),
               SizedBox(width: 10),
               Container(
@@ -214,31 +215,30 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 ),
               ),
               SizedBox(width: 10),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 0),
-                      child: ElevatedButton(
-                        onPressed: _openFolderPicker,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.buttonBackground,
-                          foregroundColor: AppColors.buttonText,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 12),
-                          elevation: 0,
-                        ),
-                        child: const Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                          child: Icon(
-                            Icons.inventory,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 0),
+                child: ElevatedButton(
+                  onPressed: _openFolderPicker,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.buttonBackground,
+                    foregroundColor: AppColors.buttonText,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
                     ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 12),
+                    elevation: 0,
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                    child: Icon(
+                      Icons.inventory,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
               Expanded(
                 child: dominantColors.isEmpty
                     ? Center(child: CircularProgressIndicator())
@@ -454,7 +454,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 ),
                 _buildColorPalette(),
                 SizedBox(height: 20),
-              
+
                 _buildThemeOption("Global Theme", globalTheme, Icons.add),
                 _buildThemeOption("GTK 3.0 Theme", gtk3Theme, Icons.edit),
                 _buildThemeOption("GTK 4.0 Theme", gtk4Theme, Icons.edit),
@@ -629,7 +629,16 @@ class _ThemeScreenState extends State<ThemeScreen> {
             ),
             child: IconButton(
               icon: Icon(icon, color: AppColors.subtext),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CssColorListScreen(
+                      extractedColors: dominantColors, // your extracted palette
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],

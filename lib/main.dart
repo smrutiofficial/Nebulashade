@@ -68,8 +68,10 @@ class _HomeScreenState extends State<HomeScreen> {
       "screen": ConfigScreen()
     },
     {"label": "Fonts", "icon": Icons.format_size, "screen": FontsScreen()},
+    {"label": "Cursors", "icon": Icons.touch_app, "screen": FontsScreen()},
     {"label": "Sound", "icon": Icons.graphic_eq, "screen": SoundScreen()},
     {"label": "Hotkey", "icon": Icons.keyboard, "screen": HotKey()},
+    {"label": "Widgets", "icon": Icons.widgets, "screen": HotKey()},
     {"label": "Windows", "icon": Icons.web_asset, "screen": win.WindowScreen()},
     {
       "label": "Extensions",

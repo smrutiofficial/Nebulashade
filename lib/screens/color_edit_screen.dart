@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nebulashade/constants/colours.dart';
 import 'package:nebulashade/screens/background_edit_color.dart';
 import 'package:nebulashade/screens/folder_edit_color.dart';
+// import 'package:nebulashade/screens/folder_edit_color.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -886,14 +887,10 @@ class _CssColorListScreenState extends State<CssColorListScreen> {
                       : screen == 1
                           // background screen
                           ? Expanded(
-                              child: BackgroundColorGrid(
-                                // colorCode: modifiedColorCodes.isNotEmpty
-                                //     ? modifiedColorCodes[0]
-                                //     : '#FFFFFF', // Pass the first color from the list (or default to white)
-                              ),
+                              child: BackgroundColorGrid(),
                             )
-                          : Center(
-                              child: Text("Folder screen"),
+                          : Expanded(
+                              child: FoldercScreen(),
                             )
                 ],
               ),

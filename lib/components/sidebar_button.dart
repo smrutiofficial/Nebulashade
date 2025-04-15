@@ -27,9 +27,9 @@ class _SidebarButtonState extends State<SidebarButton> {
     Color backgroundColor;
 
     if (widget.isSelected) {
-      backgroundColor = const Color.fromARGB(255, 49, 61, 86); // solid for selected
+      backgroundColor = AppColors.lighten(AppColors.background, 0.2); // solid for selected
     } else if (_isHovered) {
-      backgroundColor = Color.fromARGB(255, 49, 61, 86).withAlpha(60) ; // 50% black on hover
+      backgroundColor = AppColors.lighten(AppColors.background, 0.1).withAlpha(175) ; // 50% black on hover
     } else {
       backgroundColor = Colors.transparent;
     }

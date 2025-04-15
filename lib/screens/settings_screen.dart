@@ -47,106 +47,108 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "App Settings",
-              style: TextStyle(
-                color: Colors.white70,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Text(
-              "App specific settings. These do not affect the system.",
-              style: TextStyle(color: Colors.white38, fontSize: 12),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  buildSwitch("Improve Contrast", improveContrast, (val) {
-                    setState(() => improveContrast = val);
-                  }),
-                  const Divider(height: 1, color: AppColors.background),
-                  buildSwitch("Scale up", scaleUp, (val) {
-                    setState(() => scaleUp = val);
-                  }),
-                  const Divider(height: 1, color: AppColors.background),
-                  buildSwitch("Respect GNOME UI", respectGNOME, (val) {
-                    setState(() => respectGNOME = val);
-                  }),
-                  const Divider(height: 1, color: AppColors.background),
-                  buildSwitch("Toggle animations", toggleAnimations, (val) {
-                    setState(() => toggleAnimations = val);
-                  }),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            const Text(
-              "Theme Settings",
-              style: TextStyle(
-                color: Colors.white70,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Text(
-              "System level changes. May require admin privileges",
-              style: TextStyle(color: Colors.white38, fontSize: 12),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  buildSwitch("Apply Flatpak Theme", applyFlatpak, (val) {
-                    setState(() => applyFlatpak = val);
-                  }),
-                  const Divider(height: 1, color: AppColors.background),
-                  buildSwitch(
-                      "Make Default Shell Editable", makeShellEditable, (val) {
-                    setState(() => makeShellEditable = val);
-                  }),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: resetSettings,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonBackground,
-                  foregroundColor: AppColors.buttonText,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "App Settings",
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: Text("Reset Settings"),
+                const Text(
+                  "App specific settings. These do not affect the system.",
+                  style: TextStyle(color: Colors.white38, fontSize: 12),
                 ),
-              ),
-            )
-          ],
-        ),
-      ),
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.lighten(AppColors.background, 0.0),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      buildSwitch("Improve Contrast", improveContrast, (val) {
+                        setState(() => improveContrast = val);
+                      }),
+                      Divider(height: 1, color: AppColors.background),
+                      buildSwitch("Scale up", scaleUp, (val) {
+                        setState(() => scaleUp = val);
+                      }),
+                      Divider(height: 1, color: AppColors.background),
+                      buildSwitch("Respect GNOME UI", respectGNOME, (val) {
+                        setState(() => respectGNOME = val);
+                      }),
+                      Divider(height: 1, color: AppColors.background),
+                      buildSwitch("Toggle animations", toggleAnimations, (val) {
+                        setState(() => toggleAnimations = val);
+                      }),
+                    ],
+                  ),
+                ),
+        
+                const SizedBox(height: 24),
+        
+                const Text(
+                  "Theme Settings",
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  "System level changes. May require admin privileges",
+                  style: TextStyle(color: Colors.white38, fontSize: 12),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.lighten(AppColors.background, 0.0),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      buildSwitch("Apply Flatpak Theme", applyFlatpak, (val) {
+                        setState(() => applyFlatpak = val);
+                      }),
+                      Divider(height: 1, color: AppColors.background),
+                      buildSwitch(
+                          "Make Default Shell Editable", makeShellEditable, (val) {
+                        setState(() => makeShellEditable = val);
+                      }),
+                    ],
+                  ),
+                ),
+        
+                const SizedBox(height: 24),
+        
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: resetSettings,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.lighten(AppColors.background, 0.0),
+                      foregroundColor: AppColors.buttonText,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      child: Text("Reset Settings"),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

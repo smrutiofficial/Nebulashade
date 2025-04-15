@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nebulashade/constants/colours.dart';
+// import 'package:nebulashade/screens/background_edit_color.dart';
 // import 'package:nebulashade/screens/color_edit_screen.dart';
 import 'package:nebulashade/screens/hotkey_screen.dart';
 import 'package:window_manager/window_manager.dart';
@@ -17,6 +19,8 @@ import 'screens/about_screen.dart';
 import 'components/sidebar_button.dart';
 
 void main() async {
+  AppColors.init();
+  // BackgroundColorGrid.init(); // ← call it here
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
@@ -31,7 +35,10 @@ void main() async {
     await windowManager.show();
     await windowManager.focus();
   });
-  runApp(MyApp());
+  runApp(
+    MyApp(),
+  );
+  // runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -74,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF151c26),
+      backgroundColor: AppColors.background,
       body: Row(
         children: [
           // Sidebar (List of Tabs)
@@ -83,10 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 24),
               decoration: BoxDecoration(
-                color: Color(0xFF11161f),
+                color: AppColors.background,
                 border: Border(
                   right: BorderSide(
-                    color: Color(0xFF1e2532), // Sidebar border color
+                    color: AppColors.lighten(
+                        AppColors.background, 0.0), // Sidebar border color
                     width: 2.0,
                   ),
                 ),
@@ -152,7 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             flex: 8,
             child: Container(
-              color: Color(0xFF11161f),
+              decoration: BoxDecoration(
+                  color: AppColors.lighten(AppColors.background, 0.04),
+                  borderRadius: BorderRadius.circular(12)),
               child: selectedIndex < tabs.length
                   ? tabs[selectedIndex]["screen"]
                   : (selectedIndex == tabs.length

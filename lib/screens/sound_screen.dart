@@ -102,7 +102,7 @@ class _SoundScreenState extends State<SoundScreen> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: AppColors.lighten(AppColors.background, 0.0),
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

@@ -4,9 +4,7 @@ import 'package:nebulashade/constants/colours.dart';
 class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background, // Dark theme background
-      body: Center(
+    return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -92,7 +90,6 @@ class AboutScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -101,7 +98,7 @@ class AboutScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isOutlined ? Colors.transparent : AppColors.buttonBackground,
+        color: isOutlined ? Colors.transparent : AppColors.background,
         borderRadius: BorderRadius.circular(8),
         border: isOutlined ? Border.all(color: Colors.white, width: 1.5) : null,
       ),

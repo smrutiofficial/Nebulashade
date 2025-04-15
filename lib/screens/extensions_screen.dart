@@ -155,8 +155,7 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                           print("Button Pressed");
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 26, 33,
-                              44), // Set your desired background color
+                          backgroundColor: AppColors.lighten(AppColors.background, 0.0), // Set your desired background color
                           foregroundColor: AppColors.buttonText, // Text color
                           shape: RoundedRectangleBorder(
                             borderRadius:
@@ -203,7 +202,7 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                           height: 64,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
-                            color: AppColors.cardBackground,
+                            color: AppColors.background,
                             borderRadius: BorderRadius.vertical(
                               top: isFirst
                                   ? const Radius.circular(10)
@@ -237,7 +236,7 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 10, vertical: 3),
                                           decoration: BoxDecoration(
-                                            color: AppColors.buttonBackground,
+                                            color: AppColors.lighten(AppColors.background, 0.06),
                                             borderRadius:
                                                 BorderRadius.circular(6),
                                           ),

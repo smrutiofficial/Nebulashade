@@ -19,63 +19,60 @@ class _WindowScreenState extends State<WindowScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            _sectionTitle("Titlebar Buttons"),
-            _cardList([
-              _buildOptionTile("Maximize",
-                  toggle: maximize,
-                  onToggle: (val) => setState(() => maximize = val),
-                  isFirst: true,
-                  isLast: false),
-              _buildOptionTile("Minimize",
-                  toggle: minimize,
-                  onToggle: (val) => setState(() => minimize = val),
-                  isFirst: false,
-                  isLast: false),
-              _placementSelector(isFirst: false, isLast: true),
-            ]),
-            _sectionTitle("Click Actions"),
-            _cardList([
-              _buildOptionTile("Attach Modal Dialogs",
-                  toggle: attachDialogs,
-                  onToggle: (val) => setState(() => attachDialogs = val),
-                  isFirst: true,
-                  isLast: false),
-              _buildOptionTile("Center New Windows",
-                  toggle: centerNewWindows,
-                  onToggle: (val) => setState(() => centerNewWindows = val),
-                  isFirst: false,
-                  isLast: false),
-              _dropdownOptionTile(
-                  "Window Action Key",
-                  actionKey,
-                  ["Super", "Alt", "Meta"],
-                  (val) => setState(() => actionKey = val),
-                  isFirst: false,
-                  isLast: false),
-              _buildOptionTile("Resize with Secondary-Click",
-                  toggle: resizeWithRightClick,
-                  onToggle: (val) => setState(() => resizeWithRightClick = val),
-                  isFirst: false,
-                  isLast: true),
-            ]),
-            _sectionTitle("Window Focus"),
-            SizedBox(height: 8),
-            _focusModeOptions(),
-            _cardList([
-              _buildOptionTile("Raise Windows When Focused",
-                  toggle: raiseOnFocus,
-                  onToggle: (val) => setState(() => raiseOnFocus = val),
-                  isFirst: true,
-                  isLast: true),
-            ]),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: ListView(
+        children: [
+          _sectionTitle("Titlebar Buttons"),
+          _cardList([
+            _buildOptionTile("Maximize",
+                toggle: maximize,
+                onToggle: (val) => setState(() => maximize = val),
+                isFirst: true,
+                isLast: false),
+            _buildOptionTile("Minimize",
+                toggle: minimize,
+                onToggle: (val) => setState(() => minimize = val),
+                isFirst: false,
+                isLast: false),
+            _placementSelector(isFirst: false, isLast: true),
+          ]),
+          _sectionTitle("Click Actions"),
+          _cardList([
+            _buildOptionTile("Attach Modal Dialogs",
+                toggle: attachDialogs,
+                onToggle: (val) => setState(() => attachDialogs = val),
+                isFirst: true,
+                isLast: false),
+            _buildOptionTile("Center New Windows",
+                toggle: centerNewWindows,
+                onToggle: (val) => setState(() => centerNewWindows = val),
+                isFirst: false,
+                isLast: false),
+            _dropdownOptionTile(
+                "Window Action Key",
+                actionKey,
+                ["Super", "Alt", "Meta"],
+                (val) => setState(() => actionKey = val),
+                isFirst: false,
+                isLast: false),
+            _buildOptionTile("Resize with Secondary-Click",
+                toggle: resizeWithRightClick,
+                onToggle: (val) => setState(() => resizeWithRightClick = val),
+                isFirst: false,
+                isLast: true),
+          ]),
+          _sectionTitle("Window Focus"),
+          SizedBox(height: 8),
+          _focusModeOptions(),
+          _cardList([
+            _buildOptionTile("Raise Windows When Focused",
+                toggle: raiseOnFocus,
+                onToggle: (val) => setState(() => raiseOnFocus = val),
+                isFirst: true,
+                isLast: true),
+          ]),
+        ],
       ),
     );
   }
@@ -98,7 +95,7 @@ class _WindowScreenState extends State<WindowScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 12), // <-- spacing outside
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -113,7 +110,7 @@ class _WindowScreenState extends State<WindowScreen> {
           if (index.isEven) {
             return children[index ~/ 2];
           } else {
-            return const Divider(
+            return Divider(
               height: 1,
               color: AppColors.background, // Change this color as needed
               thickness: 1,
@@ -137,7 +134,7 @@ class _WindowScreenState extends State<WindowScreen> {
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.background,
         borderRadius: BorderRadius.vertical(
           top: isFirst ? const Radius.circular(10) : Radius.zero,
           bottom: isLast ? const Radius.circular(10) : Radius.zero,
@@ -172,7 +169,7 @@ class _WindowScreenState extends State<WindowScreen> {
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.background,
         borderRadius: BorderRadius.vertical(
           top: isFirst ? const Radius.circular(10) : Radius.zero,
           bottom: isLast ? const Radius.circular(10) : Radius.zero,
@@ -228,7 +225,7 @@ class _WindowScreenState extends State<WindowScreen> {
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.background,
         borderRadius: BorderRadius.vertical(
           top: isFirst ? const Radius.circular(10) : Radius.zero,
           bottom: isLast ? const Radius.circular(10) : Radius.zero,
@@ -250,7 +247,7 @@ class _WindowScreenState extends State<WindowScreen> {
                 .toList(),
             onChanged: (val) => onChanged(val!),
             underline: const SizedBox(),
-            dropdownColor: AppColors.cardBackground,
+            dropdownColor: AppColors.background,
             iconEnabledColor: Colors.white38,
           ),
         ],
@@ -280,7 +277,7 @@ class _WindowScreenState extends State<WindowScreen> {
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

@@ -169,7 +169,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF2a384c),
+                  backgroundColor: AppColors.lighten(AppColors.background, 0.2),
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6),
@@ -192,8 +192,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors
-                        .buttonBackground, // Set your desired background color
+                    backgroundColor: AppColors.lighten(AppColors.background, 0.2), // Set your desired background color
                     foregroundColor: AppColors.buttonText, // Text color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6), // Rounded corners
@@ -220,7 +219,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 child: ElevatedButton(
                   onPressed: _openFolderPicker,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.buttonBackground,
+                    backgroundColor: AppColors.lighten(AppColors.background, 0.2),
                     foregroundColor: AppColors.buttonText,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
@@ -362,7 +361,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                             height: 200,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: AppColors.cardBackground,
+                              color: AppColors.lighten(AppColors.background, 0.2),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,7 +430,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                             child: Container(
                               padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: AppColors.cardBackground,
+                                color: AppColors.lighten(AppColors.background, 0.2),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
@@ -611,7 +610,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
               width: 450,
               padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
               decoration: BoxDecoration(
-                color: AppColors.cardBackground,
+                color: AppColors.lighten(AppColors.background, 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -624,7 +623,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 4.5, horizontal: 2),
             decoration: BoxDecoration(
-              color: AppColors.buttonBackground,
+              color: AppColors.lighten(AppColors.background, 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: IconButton(

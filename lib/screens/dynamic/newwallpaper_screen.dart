@@ -173,10 +173,22 @@ class _NewWallpaperState extends State<NewWallpaper> {
                     await file.writeAsBytes(response.bodyBytes);
 
                     // After saving the wallpaper, show a dialog
-                    if (mounted) {
-                      _showDialog(
-                          'Added to Album successfully', 'Saved to $filePath');
-                    }
+                    await Process.run('notify-send', [
+                      '-i',
+                      'dialog-information',
+                      '-a',
+                      'NebulaShade',
+                      '-u',
+                      'normal',
+                      '-t',
+                      '7000',
+                      'Added to Album successfully',
+                      'Saved to $filePath'
+                    ]);
+                    // if (mounted) {
+                    //   _showDialog(
+                    //       'Added to Album successfully', 'Saved to $filePath');
+                    // }
                   } catch (e) {
                     // If saving fails, show an error dialog
                     if (mounted) {
@@ -214,10 +226,18 @@ class _NewWallpaperState extends State<NewWallpaper> {
 
                     // Set the image as wallpaper using gsettings
                     await setAsWallpaper(filePath);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Wallpaper set successfully!")),
-                    );
+                    await Process.run('notify-send', [
+                      '-i',
+                      'dialog-information',
+                      '-a',
+                      'NebulaShade',
+                      '-u',
+                      'normal',
+                      '-t',
+                      '7000',
+                      'Background Updated',
+                      'Wallpaper set successfully!'
+                    ]);
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Failed to set wallpaper: $e")),
@@ -234,7 +254,7 @@ class _NewWallpaperState extends State<NewWallpaper> {
 
   Widget buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.only(left: 50,right: 50, bottom: 20),
+      padding: const EdgeInsets.only(left: 50, right: 50, bottom: 20),
       child: TextField(
         controller: _searchController,
         style: TextStyle(color: Colors.white),

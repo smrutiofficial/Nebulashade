@@ -13,103 +13,99 @@ class _FontsScreenState extends State<FontsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // new font button
-            Row(
-              children: [
-                Spacer(),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Do something here
-                      print("Button Pressed");
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                          255, 26, 33, 44), // Set your desired background color
-                      foregroundColor: AppColors.buttonText, // Text color
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(6), // Rounded corners
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 12),
-                      elevation:
-                          0, // optional: remove elevation if you want a flat style
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // new font button
+          Row(
+            children: [
+              Spacer(),
+              Container(
+                margin: EdgeInsets.only(bottom: 10),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Do something here
+                    print("Button Pressed");
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.lighten(AppColors.background,
+                        0.0), // Set your desired background color
+                    foregroundColor: AppColors.buttonText, // Text color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6), // Rounded corners
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 8),
-                      child: Icon(
-                        Icons.shopping_cart,
-                        color: Colors.white,
-                        size: 20,
-                      ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 12),
+                    elevation:
+                        0, // optional: remove elevation if you want a flat style
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                    child: Icon(
+                      Icons.shopping_cart,
+                      color: Colors.white,
+                      size: 20,
                     ),
                   ),
                 ),
-              ],
-            ),
-            // ===================================================================
+              ),
+            ],
+          ),
+          // ===================================================================
 
-            const SectionTitle(
-              title: "Preferred Fonts",
-            ),
-            const SizedBox(height: 16),
+          const SectionTitle(
+            title: "Preferred Fonts",
+          ),
+          const SizedBox(height: 16),
 
-            // Font Option Tiles with spacing
-            Padding(
-              padding: const EdgeInsets.only(bottom: 1),
-              child: _buildOptionTile("Interface Text: Ubuntu Sans",
-                  hasArrow: true, isFirst: true, isLast: false),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 1),
-              child: _buildOptionTile("Document Text: Sans",
-                  hasArrow: true, isFirst: false, isLast: false),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildOptionTile("Monospace Text: Ubuntu Sans Mono",
-                  hasArrow: true, isFirst: false, isLast: true),
-            ),
+          // Font Option Tiles with spacing
+          Padding(
+            padding: const EdgeInsets.only(bottom: 1),
+            child: _buildOptionTile("Interface Text: Ubuntu Sans",
+                hasArrow: true, isFirst: true, isLast: false),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 1),
+            child: _buildOptionTile("Document Text: Sans",
+                hasArrow: true, isFirst: false, isLast: false),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _buildOptionTile("Monospace Text: Ubuntu Sans Mono",
+                hasArrow: true, isFirst: false, isLast: true),
+          ),
 
-            const SectionTitle(title: "Rendering"),
-            const SizedBox(height: 8),
+          const SectionTitle(title: "Rendering"),
+          const SizedBox(height: 8),
 
-            const SettingLabel(title: "Hinting"),
-            _buildRadioGroup(
-              options: ["Full", "Medium", "Slight", "None"],
-              groupValue: _hinting,
-              onChanged: (val) => setState(() => _hinting = val),
-            ),
+          const SettingLabel(title: "Hinting"),
+          _buildRadioGroup(
+            options: ["Full", "Medium", "Slight", "None"],
+            groupValue: _hinting,
+            onChanged: (val) => setState(() => _hinting = val),
+          ),
 
-            const SizedBox(height: 16),
-            const SettingLabel(title: "Antialiasing"),
-            _buildRadioGroup(
-              options: [
-                "Subpixel (for LCD screens)",
-                "Standard (grayscale)",
-                "None"
-              ],
-              groupValue: _antialiasing,
-              onChanged: (val) => setState(() => _antialiasing = val),
-            ),
+          const SizedBox(height: 16),
+          const SettingLabel(title: "Antialiasing"),
+          _buildRadioGroup(
+            options: [
+              "Subpixel (for LCD screens)",
+              "Standard (grayscale)",
+              "None"
+            ],
+            groupValue: _antialiasing,
+            onChanged: (val) => setState(() => _antialiasing = val),
+          ),
 
-            const SizedBox(height: 24),
-            const SectionTitle(title: "Size"),
-            const SizedBox(height: 8),
+          const SizedBox(height: 24),
+          const SectionTitle(title: "Size"),
+          const SizedBox(height: 8),
 
-            _buildScalingTile(),
-          ],
-        ),
+          _buildScalingTile(),
+        ],
       ),
     );
   }
@@ -126,7 +122,7 @@ class _FontsScreenState extends State<FontsScreen> {
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.lighten(AppColors.background, 0.0),
         borderRadius: BorderRadius.vertical(
           top: isFirst ? const Radius.circular(10) : Radius.zero,
           bottom: isLast ? const Radius.circular(10) : Radius.zero,
@@ -176,7 +172,7 @@ class _FontsScreenState extends State<FontsScreen> {
               height: 50,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: AppColors.cardBackground,
+                color: AppColors.lighten(AppColors.background, 0.0),
                 borderRadius: BorderRadius.vertical(
                   top: isFirst ? const Radius.circular(10) : Radius.zero,
                   bottom: isLast ? const Radius.circular(10) : Radius.zero,
@@ -208,7 +204,7 @@ class _FontsScreenState extends State<FontsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       height: 60,
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.lighten(AppColors.background, 0.0),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(

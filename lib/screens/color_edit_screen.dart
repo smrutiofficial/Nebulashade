@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:nebulashade/constants/colours.dart';
+import 'package:nebulashade/screens/background_edit_color.dart';
+import 'package:nebulashade/screens/folder_edit_color.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -50,7 +52,8 @@ class _CssColorListScreenState extends State<CssColorListScreen> {
     }));
 
     final regex = RegExp(
-      r'#(?:[0-9a-fA-F]{3}){1,2}|rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(?:,\s*(?:\d*\.\d+|\d+))?\s*\)',
+      r'#(?:[0-9a-fA-F]{3}){1,2}' // hex
+      r'|rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(?:,\s*(?:\d*\.\d+|\d+))?\s*\)', // rgb/rgba
       caseSensitive: false,
     );
 
@@ -172,7 +175,7 @@ class _CssColorListScreenState extends State<CssColorListScreen> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.cardBackground,
+      backgroundColor: AppColors.lighten(AppColors.background, 0.04),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) {
           void handleInvertToggle(bool value) {
@@ -213,6 +216,7 @@ class _CssColorListScreenState extends State<CssColorListScreen> {
               }
             });
           }
+
           return Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -296,8 +300,8 @@ class _CssColorListScreenState extends State<CssColorListScreen> {
                     ElevatedButton(
                       onPressed: handleDynamicAdapt,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            AppColors.buttonBackground, // Customize as needed
+                        backgroundColor: AppColors.lighten(
+                            AppColors.background, 0.1), // Customize as needed
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               6), // Adjust the radius here
@@ -683,15 +687,22 @@ class _CssColorListScreenState extends State<CssColorListScreen> {
                           "gsettings set org.gnome.desktop.interface gtk-theme \"\$t\""
                     ]);
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text("CSS files updated and theme reloaded!")),
-                    );
+                    await Process.run('notify-send', [
+                      '-i',
+                      'dialog-information',
+                      '-a',
+                      'NebulaShade',
+                      '-u',
+                      'normal',
+                      '-t',
+                      '7000',
+                      'Theme Updated',
+                      'New Accent Colors ,GTK themes were refreshed!'
+                    ]);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        AppColors.buttonBackground, // Customize as needed
+                    backgroundColor: AppColors.lighten(
+                        AppColors.background, 0.1), // Customize as needed
                     shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.circular(6), // Adjust the radius here
@@ -735,42 +746,156 @@ class _CssColorListScreenState extends State<CssColorListScreen> {
     return colorCode;
   }
 
+  int screen = 0; // define at the top of your State class
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        foregroundColor: Colors.white,
         backgroundColor: AppColors.background,
-        title: const Text(
-          "GTK CSS Colors",
-          style: TextStyle(color: AppColors.accent),
-        ),
       ),
       body: modifiedColorCodes.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(10),
-              child: GridView.builder(
-                itemCount: modifiedColorCodes.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 6,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.5,
-                ),
-                itemBuilder: (context, index) {
-                  final color = parseColor(modifiedColorCodes[index]);
-                  return GestureDetector(
-                    onTap: () => onColorTap(index),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: color ?? Colors.transparent,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Colors.white54),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            screen = 0;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.lighten(
+                              AppColors.background, 0.2), // 👈 background color
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: screen == 0
+                                  ? AppColors.lighten(AppColors.background, 0.6)
+                                  : Colors.transparent, // 👈 border color
+                              width: screen == 0 ? 1.5 : 0, // 👈 border width
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(6), // 👈 border radius
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 14),
+                          child: Text(
+                            "System",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            screen = 1;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.lighten(
+                              AppColors.background, 0.2), // 👈 background color
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: screen == 1
+                                  ? AppColors.lighten(AppColors.background, 0.6)
+                                  : Colors.transparent, // 👈 border color
+                              width: screen == 1 ? 1.5 : 0, // 👈 border width
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(6), // 👈 border radius
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 14),
+                          child: Text(
+                            "Background",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            screen = 2;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.lighten(
+                              AppColors.background, 0.2), // 👈 background color
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: screen == 2
+                                  ? AppColors.lighten(AppColors.background, 0.6)
+                                  : Colors.transparent, // 👈 border color
+                              width: screen == 2 ? 1.5 : 0, // 👈 border width
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(6), // 👈 border radius
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 14),
+                          child: Text(
+                            "Folder",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  // ------------------------------
+                  screen == 0
+                      ? Expanded(
+                          child: GridView.builder(
+                            itemCount: modifiedColorCodes.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 6,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 1.5,
+                            ),
+                            itemBuilder: (context, index) {
+                              final color =
+                                  parseColor(modifiedColorCodes[index]);
+                              return GestureDetector(
+                                onTap: () => onColorTap(index),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: color ?? Colors.transparent,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(color: Colors.white54),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : screen == 1
+                          // background screen
+                          ? Expanded(
+                              child: BackgroundColorGrid(
+                                // colorCode: modifiedColorCodes.isNotEmpty
+                                //     ? modifiedColorCodes[0]
+                                //     : '#FFFFFF', // Pass the first color from the list (or default to white)
+                              ),
+                            )
+                          : Center(
+                              child: Text("Folder screen"),
+                            )
+                ],
               ),
             ),
     );

@@ -33,7 +33,8 @@ class _IconsScreenState extends State<IconsScreen> {
   Future<void> loadIconPacks() async {
     setState(() => _isLoading = true); // <-- start loading
 
-    final iconDir = Directory('${Platform.environment['HOME']}/.local/share/icons');
+    final iconDir =
+        Directory('${Platform.environment['HOME']}/.local/share/icons');
     if (!await iconDir.exists()) {
       setState(() => _isLoading = false);
       return;
@@ -77,100 +78,116 @@ class _IconsScreenState extends State<IconsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: _isLoading
-          ? const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  "Loading Icons Themes ...",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              ],
-            ),
-          )
+    return Padding(
+      padding: EdgeInsets.all(0),
+      // backgroundColor: AppColors.lighten(AppColors.background, 0.04),
+      child: _isLoading
+          ? const Padding(
+              padding: EdgeInsets.all(0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Loading Icons Themes ...",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
+            )
           : Padding(
               padding: const EdgeInsets.all(12),
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: iconPacks.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final pack = entry.value;
+              child: Padding(
+  padding: const EdgeInsets.all(12),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Expanded(
+        child: SingleChildScrollView(
+          child: Wrap(
+            alignment: WrapAlignment.start,
+            crossAxisAlignment: WrapCrossAlignment.start,
+            spacing: 12,
+            runSpacing: 12,
+            children: iconPacks.asMap().entries.map((entry) {
+              final index = entry.key;
+              final pack = entry.value;
+              final isSelected = selectedIndex == index;
 
-                  final isSelected = selectedIndex == index;
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = index;
-                      });
-                    },
-                    child: Container(
-                      width: 180,
-                      height: 180,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1E293B),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isSelected
-                              ? (pack.isCorrupt ? Colors.red : Colors.blueAccent)
-                              : Colors.transparent,
-                          width: 2,
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                child: Container(
+                  width: 180,
+                  height: 180,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.lighten(AppColors.background, 0.0),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected
+                          ? (pack.isCorrupt ? Colors.red : Colors.blueAccent)
+                          : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 100,
+                        width: double.infinity,
+                        child: pack.isCorrupt
+                            ? const Center(
+                                child: Text(
+                                  'Icon-pack may be Corrupt.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 221, 221, 221),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              )
+                            : GridView.count(
+                                crossAxisCount: 3,
+                                mainAxisSpacing: 6,
+                                crossAxisSpacing: 6,
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: _buildFilteredIcons(pack),
+                              ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Text(
+                          pack.name,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 100,
-                            width: double.infinity,
-                            child: pack.isCorrupt
-                                ? const Center(
-                                    child: Text(
-                                      'Icon-pack may be Corrupt.',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Color.fromARGB(255, 221, 221, 221),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  )
-                                : GridView.count(
-                                    crossAxisCount: 3,
-                                    mainAxisSpacing: 6,
-                                    crossAxisSpacing: 6,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    children: _buildFilteredIcons(pack),
-                                  ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 6),
-                            child: Text(
-                              pack.name,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+
             ),
     );
   }

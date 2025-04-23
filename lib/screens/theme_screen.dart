@@ -32,6 +32,10 @@ class _ThemeScreenState extends State<ThemeScreen> {
   String? _selectedPaletteLabel;
   List<String> shades = [];
   bool ispalletegen = false;
+  List<String> getCurrentShades() {
+    return shades; // Returns the current shades list from the parent's state
+  }
+
   @override
   void initState() {
     super.initState();
@@ -586,6 +590,17 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                                     ispalletegen = newValue;
                                                   });
                                                 },
+                                                getCurrentShades: () => shades,
+                                                onWallpaperChanged:
+                                                    (String newPath) async {
+                                                  // Force an immediate refresh instead of waiting for timer
+                                                  setState(() {
+                                                    wallpaperPath = newPath;
+                                                  });
+                                                  await _extractColorsFromWallpaper(
+                                                      newPath);
+                                                  quickapplyTheme(); // Now call this after colors are updated
+                                                },
                                               )
                                             else
                                               const CircularProgressIndicator(),
@@ -874,11 +889,15 @@ class ImageRowScroller extends StatefulWidget {
   final List<String> shades;
   final bool ispalletegen;
   final Function(bool) onPaletteStateChanged;
+  final Function(String) onWallpaperChanged;
+  final Function() getCurrentShades;
 
   const ImageRowScroller({
     required this.shades,
     required this.ispalletegen,
     required this.onPaletteStateChanged,
+    required this.onWallpaperChanged,
+    required this.getCurrentShades,
     super.key,
   });
 
@@ -939,9 +958,6 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
       ]);
 
       if (result1.exitCode == 0 && result2.exitCode == 0) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(content: Text('Wallpaper set successfully!')),
-        // );
         await Process.run('notify-send', [
           '-i',
           'dialog-information',
@@ -954,6 +970,17 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
           'Background Updated',
           'Wallpaper set successfully!'
         ]);
+
+        // ...notifications...
+        await widget.onWallpaperChanged(path);
+
+        // Wait a bit to ensure parent state is updated
+        await Future.delayed(Duration(milliseconds: 100));
+
+        // Get the latest shades directly from parent
+        List<String> latestShades = widget.getCurrentShades();
+        print("print after -> $latestShades");
+        // widget.applyTheme();
       } else {
         throw Exception("gsettings failed");
       }
@@ -993,8 +1020,6 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
             return GestureDetector(
               onTap: () async {
                 await setAsWallpaper(imagePath);
-                print("print after setwallpaper -> ${widget.shades}");
-                quickapplyTheme();
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),

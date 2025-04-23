@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+// import 'package:nebulashade/components/quck_apply_demo.dart';
 import 'package:nebulashade/constants/colours.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
 
 class NewWallpaper extends StatefulWidget {
+  final List<String> shades;
+  const NewWallpaper(this.shades, {Key? key}) : super(key: key);
   @override
   _NewWallpaperState createState() => _NewWallpaperState();
 }
@@ -13,6 +16,7 @@ class NewWallpaper extends StatefulWidget {
 class _NewWallpaperState extends State<NewWallpaper> {
   TextEditingController _searchController = TextEditingController();
   List<Map<String, String>> _imageUrls = [];
+  List<String> shades=[];
   bool _isLoading = false;
   int currentPage = 1;
   String currentQuery = '';
@@ -226,6 +230,7 @@ class _NewWallpaperState extends State<NewWallpaper> {
 
                     // Set the image as wallpaper using gsettings
                     await setAsWallpaper(filePath);
+                    // await quickapplyThemedemo();
                     await Process.run('notify-send', [
                       '-i',
                       'dialog-information',
@@ -238,12 +243,17 @@ class _NewWallpaperState extends State<NewWallpaper> {
                       'Background Updated',
                       'Wallpaper set successfully!'
                     ]);
+                   
+                    // call quick_apply
+                    
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Failed to set wallpaper: $e")),
                     );
                   }
+
                 },
+
               ),
             ],
           ),

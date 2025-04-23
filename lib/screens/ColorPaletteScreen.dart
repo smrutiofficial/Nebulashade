@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:nebulashade/components/quickpannel.dart';
 import 'package:nebulashade/constants/colours.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class ColorPaletteScreen extends StatefulWidget {
   final ImageProvider imageProvider;
+  final List<Color> dominantColors;
 
-  const ColorPaletteScreen({super.key, required this.imageProvider});
+  const ColorPaletteScreen({
+    required this.imageProvider,
+    required this.dominantColors,
+    super.key,
+  });
 
   @override
   _ColorPaletteScreenState createState() => _ColorPaletteScreenState();
@@ -19,6 +25,15 @@ class _ColorPaletteScreenState extends State<ColorPaletteScreen> {
   void initState() {
     super.initState();
     _generatePalette();
+    _selectedPaletteLabel = "Dominant Color";
+    print(getSelectedBaseColorHex(0));
+    print(getSelectedBaseColorHex(1));
+    print(getSelectedBaseColorHex(2));
+    print(getSelectedBaseColorHex(3));
+    print(getSelectedBaseColorHex(4));
+    print(getSelectedBaseColorHex(5));
+    print(getSelectedBaseColorHex(6));
+    print(getSelectedBaseColorHex(7));
   }
 
   Future<void> _generatePalette() async {
@@ -44,8 +59,109 @@ class _ColorPaletteScreenState extends State<ColorPaletteScreen> {
     });
   }
 
+  Color generateShadesHSV(Color baseColor) {
+    final hsv = HSVColor.fromColor(baseColor);
+    return HSVColor.fromAHSV(
+      hsv.alpha,
+      hsv.hue, // keep original hue
+      0.21, // fixed saturation
+      0.25, // fixed value
+    ).toColor();
+  }
+
+  List<Color> getFilteredShades(Color baseColor) {
+    Color getDarksideShade(Color baseColor) {
+      final hsv = HSVColor.fromColor(baseColor);
+
+      return HSVColor.fromAHSV(
+        hsv.alpha,
+        hsv.hue, // keep original hue
+        0.24, // fixed saturation
+        0.15, // fixed value
+      ).toColor();
+    }
+
+    Color getDarkBgShade(Color baseColor) {
+      final hsv = HSVColor.fromColor(baseColor);
+
+      return HSVColor.fromAHSV(
+        hsv.alpha,
+        hsv.hue, // keep original hue
+        0.24, // fixed saturation
+        0.21, // fixed value
+      ).toColor();
+    }
+
+    final hsl = HSLColor.fromColor(baseColor);
+    final allShades = generateShadesBoth(baseColor);
+    final lighterShade = hsl.withLightness(0.92.clamp(0.0, 1.0)).toColor();
+    return [
+      getDarksideShade(allShades.first),
+      getDarkBgShade(allShades.first),
+      generateShadesHSV(allShades[2]),
+      ...allShades.sublist(allShades.length - 4),
+      lighterShade,
+    ];
+  }
+
+  Color _getSelectedBaseColor(int shadeIndex) {
+    final labels = [
+      "Default Color",
+      "Dominant Color",
+      "Vibrant Color",
+      "Dark Vibrant Color",
+      "Light Vibrant Color",
+      "Muted Color",
+      "Dark Muted Color",
+      "Light Muted Color"
+    ];
+
+    final index = labels.indexOf(_selectedPaletteLabel ?? "Dominant Color");
+
+    if (index >= 0 && index < widget.dominantColors.length) {
+      final baseColor = widget.dominantColors[index];
+      final shades = getFilteredShades(baseColor);
+      return (shadeIndex >= 0 && shadeIndex < shades.length)
+          ? shades[shadeIndex]
+          : baseColor;
+    }
+
+    return AppColors.background;
+  }
+
+  /// Returns the selected shade **as a 6‑digit HEX string** (e.g. “#A1B2C3”).
+  String getSelectedBaseColorHex(int shadeIndex) {
+    const labels = [
+      'Default Color',
+      'Dominant Color',
+      'Vibrant Color',
+      'Dark Vibrant Color',
+      'Light Vibrant Color',
+      'Muted Color',
+      'Dark Muted Color',
+      'Light Muted Color',
+    ];
+
+    final idx = labels.indexOf(_selectedPaletteLabel ?? 'Dominant Color');
+
+    // Pick a base colour from the dominant list or fall back.
+    Color base = (idx >= 0 && idx < widget.dominantColors.length)
+        ? widget.dominantColors[idx]
+        : AppColors.background;
+
+    // Apply shade index if available.
+    final shades = getFilteredShades(base);
+    if (shadeIndex >= 0 && shadeIndex < shades.length) {
+      base = shades[shadeIndex];
+    }
+
+    // Convert to #RRGGBB.
+    final rgb = base.value & 0xFFFFFF;
+    return '#${rgb.toRadixString(16).padLeft(6, '0').toUpperCase()}';
+  }
+
   Widget _buildColorPalette(String label, Color? baseColor) {
-    final shades = generateShadesBoth(baseColor ?? Colors.transparent);
+    final shades = getFilteredShades(baseColor ?? Colors.transparent);
     final isSelected = _selectedPaletteLabel == label;
 
     return GestureDetector(
@@ -112,14 +228,15 @@ class _ColorPaletteScreenState extends State<ColorPaletteScreen> {
     );
   }
 
+  var buttonst = 2;
+
   @override
   Widget build(BuildContext context) {
     final imageWidget = Image(image: widget.imageProvider, fit: BoxFit.cover);
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.cardBackground,
+        backgroundColor: AppColors.background,
         foregroundColor: Colors.white,
         title: const Text(
           "Color Palette",
@@ -133,41 +250,392 @@ class _ColorPaletteScreenState extends State<ColorPaletteScreen> {
       body: _palette == null
           ? const Center(child: CircularProgressIndicator())
           : Row(
-              // crossAxisAlignment: CrossAxisAlignment.start,
+              // =====================================================
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: imageWidget,
+                  flex: 7,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, top: 16),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: imageWidget,
+                                ),
+
+                                // widdet 1=========================
+                                buttonst == 1
+                                    ? Center(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            color: _getSelectedBaseColor(
+                                                1), // semi-transparent red
+                                          ),
+                                          width: 700,
+                                          height: 350,
+                                          child: Container(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 18,
+                                                      vertical: 14),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: 10,
+                                                    height: 10,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                      color: Color(
+                                                          0xFFe67e80), // semi-transparent red
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 5),
+                                                  Container(
+                                                    width: 10,
+                                                    height: 10,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                      color: Color(
+                                                          0xFFe69875), // semi-transparent red
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 5),
+                                                  Container(
+                                                    width: 10,
+                                                    height: 10,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                      color: Color(
+                                                          0xFFa7c080), // semi-transparent red
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : buttonst == 2
+                                        ?
+
+                                        // widget 2
+                                        Positioned(
+                                            top: 20,
+                                            right: 10,
+                                            child: Container(
+                                              width: 320,
+                                              height: 300,
+                                              decoration: BoxDecoration(
+                                                color: _getSelectedBaseColor(1),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: QuickSettingsPanel(
+                                                getSelectedBaseColor:
+                                                    _getSelectedBaseColor,
+                                              ),
+                                            ),
+                                          )
+                                        :
+                                        // widget 3
+                                        Center(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                color: _getSelectedBaseColor(
+                                                    1), // semi-transparent red
+                                              ),
+                                              width: 700,
+                                              height: 350,
+                                              child: Stack(
+                                                children: [
+                                                  Container(
+                                                    width: 200,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            _getSelectedBaseColor(
+                                                                0),
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        6),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        6))),
+                                                    height: double.infinity,
+                                                  ),
+                                                  Container(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 18,
+                                                          vertical: 14),
+                                                      // buttons-------------------
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            width: 10,
+                                                            height: 10,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          50),
+                                                              color: Color(
+                                                                  0xFFe67e80), // semi-transparent red
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 5),
+                                                          Container(
+                                                            width: 10,
+                                                            height: 10,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          50),
+                                                              color: Color(
+                                                                  0xFFe69875), // semi-transparent red
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 5),
+                                                          Container(
+                                                            width: 10,
+                                                            height: 10,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          50),
+                                                              color: Color(
+                                                                  0xFFa7c080), // semi-transparent red
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              // buttons monimize,close ,maximize
+                                            ),
+                                          ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  buttonst = 1;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.lighten(
+                                    AppColors.background,
+                                    0.2), // background color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                  side: BorderSide(
+                                    color: buttonst == 1
+                                        ? Colors.white
+                                        : Colors.transparent, // border color
+                                    width:
+                                        buttonst == 1 ? 1.5 : 0, // border width
+                                  ), // rounded corners // rounded corners
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 10),
+                                child: Text(
+                                  "Background",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  buttonst = 2;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.lighten(
+                                    AppColors.background,
+                                    0.2), // background color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                  side: BorderSide(
+                                    color: buttonst == 2
+                                        ? Colors.white
+                                        : Colors.transparent, // border color
+                                    width:
+                                        buttonst == 2 ? 1.5 : 0, // border width
+                                  ), // rounded corners
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 10),
+                                child: Text(
+                                  "Genome Shell",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  buttonst = 3;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.lighten(
+                                    AppColors.background,
+                                    0.2), // background color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      6), // rounded corners
+                                  side: BorderSide(
+                                    color: buttonst == 3
+                                        ? Colors.white
+                                        : Colors.transparent, // border color
+                                    width:
+                                        buttonst == 3 ? 1.5 : 0, // border width
+                                  ), // rounded corners
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 10),
+                                child: Text(
+                                  "Sidebar",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // row
+                      // buttons gtk shell,backgroud,sidebar,gtk2/3
+                      // Re-Apply button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 32),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  // quickapplyThemedemo();
+                                  // print(getSelectedBaseColorHex(
+                                  //   dominantColors: widget.dominantColors,
+                                  //   selectedLabel: _selectedPaletteLabel,
+                                  //   shadeIndex: 2,
+                                  //   getFilteredShades: getFilteredShades,
+                                  //   fallbackColor: AppColors.background,
+                                  // ));
+                                  // print(getSelectedBaseColorHex(1));
+                                  // print(getSelectedBaseColorHex(2));
+                                  // print(getSelectedBaseColorHex(3));
+                                  // print(getSelectedBaseColorHex(4));
+                                  // print(getSelectedBaseColorHex(5));
+                                  // print(getSelectedBaseColorHex(6));
+                                  // print(getSelectedBaseColorHex(7));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: _getSelectedBaseColor(5),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 20, horizontal: 28)),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.format_paint,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "Apply Theme",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
+
+                // =========================================================
                 Expanded(
-                  flex: 5,
+                  flex: 3,
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
                         _buildColorPalette(
-                            "Dominant Color", _palette!.dominantColor?.color),
+                            "Default Color", widget.dominantColors[0]),
                         _buildColorPalette(
-                            "Vibrant Color", _palette!.vibrantColor?.color),
-                        _buildColorPalette("Dark Vibrant Color",
-                            _palette!.darkVibrantColor?.color),
-                        _buildColorPalette("Light Vibrant Color",
-                            _palette!.lightVibrantColor?.color),
+                            "Dominant Color", widget.dominantColors[1]),
                         _buildColorPalette(
-                            "Muted Color", _palette!.mutedColor?.color),
-                        _buildColorPalette("Dark Muted Color",
-                            _palette!.darkMutedColor?.color),
-                        _buildColorPalette("Light Muted Color",
-                            _palette!.lightMutedColor?.color),
+                            "Vibrant Color", widget.dominantColors[2]),
+                        _buildColorPalette(
+                            "Dark Vibrant Color", widget.dominantColors[3]),
+                        _buildColorPalette(
+                            "Light Vibrant Color", widget.dominantColors[4]),
+                        _buildColorPalette(
+                            "Muted Color", widget.dominantColors[5]),
+                        _buildColorPalette(
+                            "Dark Muted Color", widget.dominantColors[6]),
+                        _buildColorPalette(
+                            "Light Muted Color", widget.dominantColors[7]),
                       ],
                     ),
                   ),

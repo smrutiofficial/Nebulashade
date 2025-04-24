@@ -1042,8 +1042,8 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
 
         // Get the latest shades directly from parent
         List<String> latestShades = widget.getCurrentShades();
-        print("print after -> $latestShades");
-        await quickapplyTheme(latestShades[3]);
+        // print("print after -> $latestShades");
+        await quickapplyTheme(latestShades[1]);
         widget.onThemechange(false);
       } else {
         throw Exception("gsettings failed");

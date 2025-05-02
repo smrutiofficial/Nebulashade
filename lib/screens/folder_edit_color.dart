@@ -64,10 +64,10 @@ class _BackgroundColorGridState extends State<FoldercScreen> {
       print('Original hex color: $originalHex'); // Log the original color
 
       // Replace only the fill value (not fill-opacity)
-      final modified = contents.replaceAllMapped(
-        RegExp(r'(id="path2"\s+style="[^"]*?)fill:#[A-Fa-f0-9]{6}'),
-        (match) => '${match[1]}fill:#ff0000',
-      );
+      // final modified = contents.replaceAllMapped(
+      //   RegExp(r'(id="path2"\s+style="[^"]*?)fill:#[A-Fa-f0-9]{6}'),
+      //   (match) => '${match[1]}fill:#ff0000',
+      // );
       setState(() {
         background = originalHex; // Use the original hex color
       });
@@ -87,10 +87,10 @@ class _BackgroundColorGridState extends State<FoldercScreen> {
     return null;
   }
 
-  String _parseHexColor(String hex) {
-    final clean = hex.replaceAll('#', '').toUpperCase();
-    return '#$clean';
-  }
+  // String _parseHexColor(String hex) {
+  //   final clean = hex.replaceAll('#', '').toUpperCase();
+  //   return '#$clean';
+  // }
 
   Future<void> applyAndSaveColor(String oldColorHex, String newColorHex) async {
     for (final path in filePaths) {

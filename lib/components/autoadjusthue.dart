@@ -18,36 +18,36 @@ Future<void> automaticColorAdjustment(String targetHexCode) async {
   // Parse target color
   final targetColor = _parseColor(targetHexCode);
   if (targetColor == null) {
-    print("Invalid hex color provided: $targetHexCode");
+    // print("Invalid hex color provided: $targetHexCode");
     return;
   }
 
   // Extract target hue
   final targetHue = HSVColor.fromColor(targetColor).hue;
-  print("Target hue: $targetHue");
+  // print("Target hue: $targetHue");
 
   try {
     // Process each CSS file individually
     for (var path in filePaths) {
       final file = File(path);
       if (await file.exists()) {
-        print("Processing file: $path");
+        // print("Processing file: $path");
         String fileContent = await file.readAsString();
         
         // Extract colors from current file
         final colorCodes = _extractColorsFromContent(fileContent);
         if (colorCodes.isEmpty) {
-          print("No colors found in file: $path");
+          // print("No colors found in file: $path");
           continue;
         }
 
         // Calculate average hue of the current file's colors properly
         final double averageHue = _calculateAverageHue(colorCodes);
-        print("Average hue for $path: $averageHue");
+        // print("Average hue for $path: $averageHue");
 
         // Calculate hue shift (using proper circular math)
         final double hueShift = _calculateHueShift(targetHue, averageHue);
-        print("Hue shift amount: $hueShift");
+        // print("Hue shift amount: $hueShift");
 
         // Replace all color codes in file
         for (String colorCode in colorCodes) {
@@ -59,15 +59,15 @@ Future<void> automaticColorAdjustment(String targetHexCode) async {
 
         // Write updated content back to file
         await file.writeAsString(fileContent);
-        print("Updated file: $path");
+        // print("Updated file: $path");
       } else {
-        print("File does not exist: $path");
+        // print("File does not exist: $path");
       }
     }
     
-    print("Color adjustment completed successfully!");
+    // print("Color adjustment completed successfully!");
   } catch (e) {
-    print("Error during color adjustment: ${e.toString()}");
+    // print("Error during color adjustment: ${e.toString()}");
   }
 }
 
@@ -85,22 +85,22 @@ List<String> _extractColorsFromContent(String content) {
 }
 
 // Extract colors from CSS files
-Future<List<String>> _extractColorsFromCss(List<String> filePaths) async {
-  final fileContents = await Future.wait(filePaths.map((path) async {
-    final file = File(path);
-    if (await file.exists()) {
-      return await file.readAsString();
-    }
-    return '';
-  }));
+// Future<List<String>> _extractColorsFromCss(List<String> filePaths) async {
+//   final fileContents = await Future.wait(filePaths.map((path) async {
+//     final file = File(path);
+//     if (await file.exists()) {
+//       return await file.readAsString();
+//     }
+//     return '';
+//   }));
 
-  final allMatches = <String>{};
-  for (var content in fileContents) {
-    allMatches.addAll(_extractColorsFromContent(content));
-  }
+//   final allMatches = <String>{};
+//   for (var content in fileContents) {
+//     allMatches.addAll(_extractColorsFromContent(content));
+//   }
 
-  return allMatches.toList();
-}
+//   return allMatches.toList();
+// }
 
 // Parse color string to Color object with improved error handling
 Color? _parseColor(String code) {
@@ -149,7 +149,7 @@ Color? _parseColor(String code) {
       return Color.fromRGBO(r, g, b, 1.0);
     }
   } catch (e) {
-    print("Error parsing color '$code': ${e.toString()}");
+    // print("Error parsing color '$code': ${e.toString()}");
   }
   return null;
 }

@@ -1,0 +1,50 @@
+#!/bin/bash
+set -e
+
+PACKAGE_NAME="nebulashade"
+DESKTOP_FILE_PATH="/usr/share/applications/${PACKAGE_NAME}.desktop"
+BIN_PATH="/usr/local/opt/nebulashade/bin/${PACKAGE_NAME}"
+
+echo "Starting post-installation script for ${PACKAGE_NAME}..."
+
+# Ensure the binary is executable
+if [ -f "${BIN_PATH}" ]; then
+    echo "Making the binary executable..."
+    chmod +x "${BIN_PATH}"
+else
+    echo "Error: Binary not found at ${BIN_PATH}!"
+    exit 1
+fi
+
+# Check for icon and desktop entry
+if [ -f "/usr/share/icons/hicolor/512x512/apps/${PACKAGE_NAME}.png" ]; then
+    echo "Icon file found."
+else
+    echo "Error: Icon file not found!"
+    exit 1
+fi
+
+echo "Creating the .desktop file for ${PACKAGE_NAME}..."
+cat <<EOF > "${DESKTOP_FILE_PATH}"
+[Desktop Entry]
+Version=1.0
+Name=Nebulashade
+Comment=Automate system setup and configure Linux applications
+StartupWMClass=com.example.nebulashade
+Exec=${BIN_PATH}
+Icon=/usr/share/icons/hicolor/512x512/apps/${PACKAGE_NAME}.png
+Terminal=false
+Type=Application
+Categories=Utility;System;
+EOF
+
+# Ensure the .desktop file has the correct permissions
+chmod 644 "${DESKTOP_FILE_PATH}"
+
+# Update desktop database
+if hash update-desktop-database 2>/dev/null; then
+    echo "Updating desktop database..."
+    update-desktop-database
+fi
+
+echo "${PACKAGE_NAME} post-installation complete!"

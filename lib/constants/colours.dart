@@ -27,6 +27,21 @@ class AppColors {
     return lighter.toColor();
   }
 
+static Color adjustColor(Color color,
+      {int saturationDelta = 0, int valueDelta = 0}) {
+  final hsv = HSVColor.fromColor(color);
+
+  final newSaturation = (saturationDelta.clamp(0, 100)) / 100;
+  final newValue = (valueDelta.clamp(0, 100)) / 100;
+
+  final adjusted = hsv.withSaturation(newSaturation).withValue(newValue);
+  return adjusted.toColor();
+}
+
+
+  static late Color accentdark;
+  static late Color accentbrite;
+
   /// Call this before using any colors (e.g., in main function)
   static void init() {
     try {
@@ -46,6 +61,10 @@ class AppColors {
       textPrimary = colorMatch != null
           ? _parseHexColor(colorMatch.group(1)!)
           : fallbackTextPrimary;
+
+      accentdark = adjustColor(background, saturationDelta: 70, valueDelta: 18);
+      accentbrite =
+          adjustColor(background, saturationDelta: 70, valueDelta: 68);
     } catch (e) {
       background = fallbackBackground;
       textPrimary = fallbackTextPrimary;

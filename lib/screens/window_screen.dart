@@ -153,10 +153,14 @@ class _WindowScreenState extends State<WindowScreen> {
               child: Switch(
                 value: toggle,
                 onChanged: onToggle,
-                activeColor: const Color(0xFF151c26),
-                activeTrackColor: const Color(0xFFbdcadb),
-                inactiveThumbColor: const Color(0xFFbdcadb),
-                inactiveTrackColor: const Color(0xFF151c26),
+                activeColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 24, valueDelta: 49),
+                activeTrackColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 70, valueDelta: 18),
+                inactiveThumbColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 70, valueDelta: 18),
+                inactiveTrackColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 24, valueDelta: 49),
               ),
             ),
         ],
@@ -199,13 +203,17 @@ class _WindowScreenState extends State<WindowScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.accent : AppColors.buttonBackground,
+          color: isSelected
+              ? AppColors.adjustColor(AppColors.background,
+                  saturationDelta: 70, valueDelta: 18)
+              : AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 24, valueDelta: 49),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.black : Colors.white,
+            color: isSelected ? Colors.white : Colors.black,
             fontSize: 12,
           ),
         ),
@@ -287,14 +295,16 @@ class _WindowScreenState extends State<WindowScreen> {
             value: entry.key,
             groupValue: focusOption,
             onChanged: (val) => setState(() => focusOption = val!),
-            activeColor: AppColors.accent,
+            activeColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 24, valueDelta: 60),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   entry.value["title"]!,
-                  style: const TextStyle(
-                    color: AppColors.accent,
+                  style: TextStyle(
+                    color: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 24, valueDelta: 60),
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),

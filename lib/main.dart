@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
-   final AppColorsNotifier backgroundNotifier;
+  final AppColorsNotifier backgroundNotifier;
 
   const HomeScreen({super.key, required this.backgroundNotifier});
   @override
@@ -89,101 +89,99 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   ];
 
-
   @override
-Widget build(BuildContext context) {
-  return ValueListenableBuilder<Color>(
-    valueListenable: widget.backgroundNotifier,
-    builder: (context, backgroundColor, _) {
-      return Scaffold(
-        backgroundColor: backgroundColor,
-        body: Row(
-          children: [
-            // Sidebar (List of Tabs)
-            Expanded(
-              flex: 2,
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 24),
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  border: Border(
-                    right: BorderSide(
-                      color: AppColors.lighten(backgroundColor, 0.0),
-                      width: 2.0,
-                    ),
-                  ),
-                ),
-                height: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Top Buttons
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: List.generate(
-                        tabs.length,
-                        (index) => SidebarButton(
-                          icon: tabs[index]["icon"],
-                          label: tabs[index]["label"],
-                          isSelected: selectedIndex == index,
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                          },
-                        ),
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Color>(
+      valueListenable: widget.backgroundNotifier,
+      builder: (context, backgroundColor, _) {
+        return Scaffold(
+          backgroundColor: backgroundColor,
+          body: Row(
+            children: [
+              // Sidebar (List of Tabs)
+              Expanded(
+                flex: 2,
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    border: Border(
+                      right: BorderSide(
+                        color: AppColors.lighten(backgroundColor, 0.0),
+                        width: 2.0,
                       ),
                     ),
-                    // Bottom Buttons
-                    Column(
-                      children: [
-                        SidebarButton(
-                          icon: Icons.settings,
-                          label: "Settings",
-                          isSelected: selectedIndex == tabs.length,
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = tabs.length;
-                            });
-                          },
+                  ),
+                  height: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Top Buttons
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(
+                          tabs.length,
+                          (index) => SidebarButton(
+                            icon: tabs[index]["icon"],
+                            label: tabs[index]["label"],
+                            isSelected: selectedIndex == index,
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = index;
+                              });
+                            },
+                          ),
                         ),
-                        SidebarButton(
-                          icon: Icons.info,
-                          label: "About",
-                          isSelected: selectedIndex == tabs.length + 1,
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = tabs.length + 1;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      // Bottom Buttons
+                      Column(
+                        children: [
+                          SidebarButton(
+                            icon: Icons.settings,
+                            label: "Settings",
+                            isSelected: selectedIndex == tabs.length,
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = tabs.length;
+                              });
+                            },
+                          ),
+                          SidebarButton(
+                            icon: Icons.info,
+                            label: "About",
+                            isSelected: selectedIndex == tabs.length + 1,
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = tabs.length + 1;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Main content
-            Expanded(
-              flex: 8,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.lighten(backgroundColor, 0.04),
-                  borderRadius: BorderRadius.circular(12),
+              // Main content
+              Expanded(
+                flex: 8,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.lighten(backgroundColor, 0.04),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: selectedIndex < tabs.length
+                      ? tabs[selectedIndex]["screen"]
+                      : (selectedIndex == tabs.length
+                          ? SettingsScreen()
+                          : AboutScreen()),
                 ),
-                child: selectedIndex < tabs.length
-                    ? tabs[selectedIndex]["screen"]
-                    : (selectedIndex == tabs.length
-                        ? SettingsScreen()
-                        : AboutScreen()),
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

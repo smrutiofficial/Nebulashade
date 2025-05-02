@@ -222,13 +222,14 @@ class _ConfigScreenState extends State<ConfigScreen> {
             child: Switch(
               value: value,
               onChanged: onChanged,
-              activeColor:
-                  Color(0xFF151c26), // Color of the switch thumb when ON
-              activeTrackColor: Color(0xFFbdcadb), // Background color when ON
-              inactiveThumbColor:
-                  Color(0xFFbdcadb), // Color of the switch thumb when OFF
-              inactiveTrackColor:
-                  Color(0xFF151c26), // Background color when OFF
+              activeColor: AppColors.adjustColor(AppColors.background,
+                  saturationDelta: 24, valueDelta: 49),
+              activeTrackColor: AppColors.adjustColor(AppColors.background,
+                  saturationDelta: 70, valueDelta: 18),
+              inactiveThumbColor: AppColors.adjustColor(AppColors.background,
+                  saturationDelta: 70, valueDelta: 18),
+              inactiveTrackColor: AppColors.adjustColor(AppColors.background,
+                  saturationDelta: 24, valueDelta: 49),
             ),
           ),
         ],
@@ -267,13 +268,14 @@ class _ConfigScreenState extends State<ConfigScreen> {
               child: Switch(
                 value: toggle,
                 onChanged: onToggle,
-                activeColor:
-                    Color(0xFF151c26), // Color of the switch thumb when ON
-                activeTrackColor: Color(0xFFbdcadb), // Background color when ON
-                inactiveThumbColor:
-                    Color(0xFFbdcadb), // Color of the switch thumb when OFF
-                inactiveTrackColor:
-                    Color(0xFF151c26), // Background color when OFF
+                activeColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 24, valueDelta: 49),
+                activeTrackColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 70, valueDelta: 18),
+                inactiveThumbColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 70, valueDelta: 18),
+                inactiveTrackColor: AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 24, valueDelta: 49),
               ),
             ),
         ],

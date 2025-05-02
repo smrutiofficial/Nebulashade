@@ -15,7 +15,10 @@ import 'package:shimmer/shimmer.dart';
 // import 'package:file_picker/file_picker.dart';
 
 class ThemeScreen extends StatefulWidget {
+  const ThemeScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _ThemeScreenState createState() => _ThemeScreenState();
 }
 
@@ -317,93 +320,92 @@ class _ThemeScreenState extends State<ThemeScreen> {
 // Add this in your build method where you want to show the colors
   Widget _buildColorPalette() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end, // Align to right
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         SizedBox(height: 40),
         Container(
           height: 40,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.lighten(AppColors.background, 0.2),
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ),
-                onPressed: () {},
-                child: Text("Open CSS file",
-                    style: TextStyle(color: AppColors.subtext, fontSize: 12)),
-              ),
-              SizedBox(width: 10),
-              Container(
-                margin: EdgeInsets.only(bottom: 0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GetThemes(),
+              Row(
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.lighten(AppColors.background, 0.2),
+                      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.lighten(AppColors.background,
-                        0.2), // Set your desired background color
-                    foregroundColor: AppColors.buttonText, // Text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6), // Rounded corners
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 12),
-                    elevation:
-                        0, // optional: remove elevation if you want a flat style
+                    onPressed: () {},
+                    child: Text("Open CSS file",
+                        style: TextStyle(color: Colors.white, fontSize: 12)),
                   ),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                    child: Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white,
-                      size: 20,
+                  SizedBox(width: 10),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GetThemes(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.lighten(AppColors.background, 0.2),
+                        foregroundColor: AppColors.buttonText,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                        elevation: 0,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                        child: Icon(
+                          Icons.shopping_cart,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(width: 10),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 0),
+                    child: ElevatedButton(
+                      onPressed: _openFolderPicker,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.lighten(AppColors.background, 0.2),
+                        foregroundColor: AppColors.buttonText,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                        elevation: 0,
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                        child: Icon(
+                          Icons.inventory,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: 10),
-              Container(
-                margin: const EdgeInsets.only(bottom: 0),
-                child: ElevatedButton(
-                  onPressed: _openFolderPicker,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        AppColors.lighten(AppColors.background, 0.2),
-                    foregroundColor: AppColors.buttonText,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 12),
-                    elevation: 0,
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                    child: Icon(
-                      Icons.inventory,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ),
-              Spacer(),
-              ispalletegen == false
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Expanded(
-                        flex: 4,
-                        child: Container(
+              SizedBox(width: 20),
+              Expanded(
+                flex: 5,
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: ispalletegen == false
+                      ? Container(
                           width: 590,
                           height: double.infinity,
                           color: AppColors.lighten(AppColors.background, 0.2),
@@ -415,24 +417,14 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                   fontWeight: FontWeight.w400),
                             ),
                           ),
-                        ),
-                      ),
-                    )
-                  : Expanded(
-                      flex: 5,
-                      child: Directionality(
-                        // Add Directionality for RTL layout
-                        textDirection:
-                            TextDirection.rtl, // This makes it start from right
-                        child: ListView.builder(
+                        )
+                      : ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: dominantColors.length,
                           itemBuilder: (context, index) {
-                            // No need to reverse the list since Directionality handles it
                             return GestureDetector(
                               onTap: () {
-                                print(
-                                    'Color selected: ${dominantColors[index]}');
+                                print('Color selected: ${dominantColors[index]}');
                               },
                               child: Container(
                                 width: 64.8,
@@ -444,8 +436,8 @@ class _ThemeScreenState extends State<ThemeScreen> {
                             );
                           },
                         ),
-                      ),
-                    ),
+                ),
+              ),
             ],
           ),
         ),
@@ -550,8 +542,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                   children: [
                                     Text("Album",
                                         style: TextStyle(
-                                            color: AppColors.subtext,
-                                            fontSize: 14)),
+                                            color: Colors.white, fontSize: 14)),
                                     // SizedBox(width: 10),
                                     // _HoverIcon(icon: Icons.edit, size: 18),
                                     SizedBox(width: 10),
@@ -577,7 +568,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                     ),
                                     Spacer(),
                                     Icon(Icons.photo,
-                                        color: AppColors.subtext, size: 24),
+                                        color: Colors.white, size: 24),
                                   ],
                                 ),
                                 Container(
@@ -682,7 +673,8 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                                     color: Colors.white,
                                                     fontSize: 14)),
                                             SizedBox(width: 12),
-                                            Icon(Icons.bolt, color: Colors.white),
+                                            Icon(Icons.bolt,
+                                                color: Colors.white),
                                           ],
                                         ),
                                       ),
@@ -726,8 +718,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Toggle Dark Mode",
-                        style:
-                            TextStyle(color: AppColors.subtext, fontSize: 14)),
+                        style: TextStyle(color: Colors.white, fontSize: 14)),
                     Transform.scale(
                       scale: 0.9,
                       child: Switch(
@@ -737,10 +728,20 @@ class _ThemeScreenState extends State<ThemeScreen> {
                             isDarkMode = value;
                           });
                         },
-                        activeColor: Color(0xFF151c26),
-                        activeTrackColor: Color(0xFFbdcadb),
-                        inactiveThumbColor: Color(0xFFbdcadb),
-                        inactiveTrackColor: Color(0xFF151c26),
+                        activeColor: AppColors.adjustColor(AppColors.background,
+                            saturationDelta: 24, valueDelta: 49),
+                        activeTrackColor: AppColors.adjustColor(
+                            AppColors.background,
+                            saturationDelta: 70,
+                            valueDelta: 18),
+                        inactiveThumbColor: AppColors.adjustColor(
+                            AppColors.background,
+                            saturationDelta: 70,
+                            valueDelta: 18),
+                        inactiveTrackColor: AppColors.adjustColor(
+                            AppColors.background,
+                            saturationDelta: 24,
+                            valueDelta: 49),
                       ),
                     )
                   ],
@@ -750,8 +751,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Fix Flatpak GTK Theme",
-                        style:
-                            TextStyle(color: AppColors.subtext, fontSize: 14)),
+                        style: TextStyle(color: Colors.white, fontSize: 14)),
                     Transform.scale(
                       scale: 0.9,
                       child: Switch(
@@ -761,10 +761,20 @@ class _ThemeScreenState extends State<ThemeScreen> {
                             isDarkMode = value;
                           });
                         },
-                        activeColor: Color(0xFF151c26),
-                        activeTrackColor: Color(0xFFbdcadb),
-                        inactiveThumbColor: Color(0xFFbdcadb),
-                        inactiveTrackColor: Color(0xFF151c26),
+                        activeColor: AppColors.adjustColor(AppColors.background,
+                            saturationDelta: 24, valueDelta: 49),
+                        activeTrackColor: AppColors.adjustColor(
+                            AppColors.background,
+                            saturationDelta: 70,
+                            valueDelta: 18),
+                        inactiveThumbColor: AppColors.adjustColor(
+                            AppColors.background,
+                            saturationDelta: 70,
+                            valueDelta: 18),
+                        inactiveTrackColor: AppColors.adjustColor(
+                            AppColors.background,
+                            saturationDelta: 24,
+                            valueDelta: 49),
                       ),
                     )
                   ],
@@ -784,10 +794,10 @@ class _ThemeScreenState extends State<ThemeScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Text(title, style: TextStyle(color: AppColors.subtext, fontSize: 14)),
+          Text(title, style: TextStyle(color: Colors.white, fontSize: 14)),
           if (title == "Global Theme") ...[
             SizedBox(width: 8),
-            Icon(Icons.info, color: AppColors.accent, size: 24),
+            Icon(Icons.info, color: Colors.white, size: 24),
           ],
           Spacer(),
           GestureDetector(
@@ -839,8 +849,8 @@ class _ThemeScreenState extends State<ThemeScreen> {
                                         ListTile(
                                           title: Text(
                                             theme,
-                                            style: TextStyle(
-                                                color: AppColors.accent),
+                                            style:
+                                                TextStyle(color: Colors.white),
                                           ),
                                           onTap: () {
                                             setState(() {
@@ -878,7 +888,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
               ),
               child: Text(
                 themeName,
-                style: TextStyle(color: AppColors.textprimary),
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ),
@@ -890,7 +900,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: IconButton(
-              icon: Icon(icon, color: AppColors.subtext),
+              icon: Icon(icon, color: Colors.white),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -938,7 +948,7 @@ class _HoverIconState extends State<_HoverIcon> {
         child: Icon(
           widget.icon,
           size: widget.size,
-          color: AppColors.subtext,
+          color: Colors.white,
         ),
       ),
     );
@@ -1115,7 +1125,7 @@ class _ImageRowScrollerState extends State<ImageRowScroller> {
                         child: Container(
                           color: Colors.grey[300],
                           child: const Center(
-                            child: Icon(Icons.image, color: Colors.black26),
+                            child: Icon(Icons.image, color: Colors.white),
                           ),
                         ),
                       ),
@@ -1134,6 +1144,7 @@ class CustomShimmer extends StatefulWidget {
   const CustomShimmer({Key? key, required this.child}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomShimmerState createState() => _CustomShimmerState();
 }
 

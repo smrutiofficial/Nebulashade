@@ -7,13 +7,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nebulashade/constants/colours.dart';
 
 import 'package:nebulashade/main.dart';
+import 'package:nebulashade/screens/utils/backgroundNoti.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    final backgroundNotifier = AppColorsNotifier(AppColors.background);
+    backgroundNotifier.startWatching();
+    await tester.pumpWidget(MyApp(backgroundNotifier));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

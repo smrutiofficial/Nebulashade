@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+PACKAGE_NAME="nebulashade"
+
+# Remove the installed files
+rm -f /usr/bin/${PACKAGE_NAME}
+echo "Removed the installed files."
+rm -f /usr/share/icons/hicolor/512x512/apps/${PACKAGE_NAME}.png
+echo "Removed Nebulashade icon."
+rm -f /usr/share/applications/${PACKAGE_NAME}.desktop
+echo "Removed devnest.desktop file."
+
+# Optionally, remove configuration or data files
+CONFIG_DIR="${HOME}/.config/${PACKAGE_NAME}"
+if [ -d "${CONFIG_DIR}" ]; then
+  echo "Removing configuration directory: ${CONFIG_DIR}"
+  rm -rf "${CONFIG_DIR}"
+fi
+
+echo "${PACKAGE_NAME} has been completely uninstalled."

@@ -120,7 +120,7 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment
                           .start, // Aligns text to the start (left)
-                      children: const [
+                      children: [
                         Padding(
                           padding: EdgeInsets.only(top: 12),
                           child: Text(
@@ -138,7 +138,8 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                             "Right click to show more option",
                             style: TextStyle(
                               fontSize: 10,
-                              color: AppColors.accent,
+                              color:  AppColors.adjustColor(AppColors.background,
+                    saturationDelta: 24, valueDelta: 80),
                             ),
                           ),
                         ),
@@ -155,7 +156,9 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                           print("Button Pressed");
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.lighten(AppColors.background, 0.0), // Set your desired background color
+                          backgroundColor: AppColors.lighten(
+                              AppColors.background,
+                              0.0), // Set your desired background color
                           foregroundColor: AppColors.buttonText, // Text color
                           shape: RoundedRectangleBorder(
                             borderRadius:
@@ -236,7 +239,8 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 10, vertical: 3),
                                           decoration: BoxDecoration(
-                                            color: AppColors.lighten(AppColors.background, 0.06),
+                                            color: AppColors.lighten(
+                                                AppColors.background, 0.06),
                                             borderRadius:
                                                 BorderRadius.circular(6),
                                           ),
@@ -268,10 +272,22 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                                 child: Switch(
                                   value: ext.enabled,
                                   onChanged: (_) => _toggleExtension(ext),
-                                  activeColor: const Color(0xFF151c26),
-                                  activeTrackColor: const Color(0xFFbdcadb),
-                                  inactiveThumbColor: const Color(0xFFbdcadb),
-                                  inactiveTrackColor: const Color(0xFF151c26),
+                                  activeColor: AppColors.adjustColor(
+                                      AppColors.background,
+                                      saturationDelta: 24,
+                                      valueDelta: 49),
+                                  activeTrackColor: AppColors.adjustColor(
+                                      AppColors.background,
+                                      saturationDelta: 70,
+                                      valueDelta: 18),
+                                  inactiveThumbColor: AppColors.adjustColor(
+                                      AppColors.background,
+                                      saturationDelta: 70,
+                                      valueDelta: 18),
+                                  inactiveTrackColor: AppColors.adjustColor(
+                                      AppColors.background,
+                                      saturationDelta: 24,
+                                      valueDelta: 49),
                                 ),
                               ),
                             ],

@@ -1,0 +1,8 @@
+Package: nebulashade
+Version: 1.0.0
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libgtk-3-0
+Maintainer: Smruti Prakash Rout <smrutiprakashrout3@gmail.com>
+Description: DevNest is a Linux desktop app that automates the setup of your development environment. From system updates and app installations to configuring Flatpak, GNOME extensions, desktop wallpaper, Neovim, and tmux, DevNest handles it all. Save time and kickstart your development journey with a fully configured Linux desktop in no time.
